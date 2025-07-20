@@ -35,6 +35,7 @@ class HomeViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         self.title = "Home"
+        collectionView.delegate = self
         setUpUI()
     }
     
@@ -53,6 +54,11 @@ class HomeViewController: UIViewController {
         
         stackContainerView.addArrangedSubview(noteCollectionView)
     }
-    
 }
 
+extension HomeViewController: HomeCategoryCollectionViewDelegate {
+    func tappedAddNewCategoryButton() {
+        let vc = CategoryViewController()
+        navigationController?.pushViewController(vc, animated: true)
+    }
+}

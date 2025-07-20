@@ -12,7 +12,7 @@ class HomeCategoryCollectionViewCell: UICollectionViewCell {
     
     private let categoryButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Deneme", for: .normal)
+        button.setTitle("all", for: .normal)
         button.tintColor = UIColor.label
         button.layer.cornerRadius = 8
         button.layer.borderWidth = 1
