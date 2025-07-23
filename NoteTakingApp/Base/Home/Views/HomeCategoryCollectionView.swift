@@ -11,12 +11,22 @@ protocol HomeCategoryCollectionViewDelegate: AnyObject {
     func tappedAddNewCategoryButton()
 }
 
-
 class HomeCategoryCollectionView: UIView {
     
+    private let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     weak var delegate: HomeCategoryCollectionViewDelegate?
+    var categoryItems: [Category]?
     
-    private let collectionView: UICollectionView = {
+    private let categoryTitle: UILabel = {
+        var lbl = UILabel()
+        lbl.text = "Categories"
+        lbl.textColor = .label
+        lbl.textAlignment = .left
+        lbl.font = UIFont(name: "HelveticaNeue-Medium", size: 17)
+        return lbl
+    }()
+    
+    private var collectionView: UICollectionView = {
         var layout = UICollectionViewFlowLayout()
         layout.minimumLineSpacing = 8
         layout.scrollDirection = .horizontal
@@ -38,6 +48,9 @@ class HomeCategoryCollectionView: UIView {
         var button = UIButton()
         button.setImage(UIImage(systemName: "plus"), for: .normal)
         button.tintColor = .systemGreen
+        button.layer.cornerRadius = 4
+        button.layer.borderWidth = 1
+        button.layer.borderColor = UIColor.systemGreen.cgColor
         return button
     }()
     
@@ -46,8 +59,14 @@ class HomeCategoryCollectionView: UIView {
         
         collectionView.delegate = self
         collectionView.dataSource = self
+        
         collectionView.register(HomeCategoryCollectionViewCell.self, forCellWithReuseIdentifier: HomeCategoryCollectionViewCell.identifier)
+        
         addCategoryButton.addTarget(self, action: #selector(crateNewCategory), for: .touchUpInside)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleButtonTap), name: .didTapSaveButton, object: nil)
+        
+        fetchAllCategories()
+        
         setupViews()
     }
     
@@ -56,31 +75,74 @@ class HomeCategoryCollectionView: UIView {
     }
     
     private func setupViews() {
+        addSubview(categoryTitle)
+        categoryTitle.autoPinEdge(.left, to: .left, of: self)
+        categoryTitle.autoPinEdge(.top, to: .top, of: self)
+        
         addSubview(collectionView)
         collectionView.autoPinEdge(.left, to: .left, of: self)
-        collectionView.autoPinEdge(.top, to: .top, of: self)
+        collectionView.autoPinEdge(.top, to: .bottom, of: categoryTitle, withOffset: 8)
         collectionView.autoPinEdge(.bottom, to: .bottom, of: self)
         
         addSubview(addCategoryButton)
         addCategoryButton.autoPinEdge(.left, to: .right, of: collectionView, withOffset: 8)
-        addCategoryButton.autoPinEdge(.right, to: .right, of: self, withOffset: -8)
-        addCategoryButton.autoPinEdge(.top, to: .top, of: self, withOffset: 8)
-        addCategoryButton.autoPinEdge(.bottom, to: .bottom, of: self, withOffset: -8)
+        addCategoryButton.autoPinEdge(.right, to: .right, of: self, withOffset: -4)
+        addCategoryButton.autoAlignAxis(.horizontal, toSameAxisOf: collectionView)
     }
     
     @objc func crateNewCategory() {
         delegate?.tappedAddNewCategoryButton()
     }
+    
+    @objc private func handleButtonTap(category: Category) {
+        fetchAllCategories()
+        collectionView.reloadData()
+        
+    }
+    
+    private func fetchAllCategories() {
+        do {
+            let categories = try context.fetch(Category.fetchRequest())
+            self.categoryItems = categories
+            self.collectionView.reloadData()
+            
+        } catch {
+            
+        }
+    }
 }
 
-extension HomeCategoryCollectionView: UICollectionViewDelegate, UICollectionViewDataSource {
+extension HomeCategoryCollectionView: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 1
+        return categoryItems?.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeCategoryCollectionViewCell.identifier, for: indexPath) as! HomeCategoryCollectionViewCell
+        
+        cell.delegate = self
+        
+        let color = categoryItems?[indexPath.item].categoryColor?.decodeColor()
+        cell.setUpUI(categoryName: categoryItems?[indexPath.row].categoryName, categoryColor: color)
         return cell
     }
 }
+
+extension HomeCategoryCollectionView: HomeCategoryCollectionViewCellDelegate {
+    func homeCategoryCellDidTapDelete(_ cell: HomeCategoryCollectionViewCell) {
+        guard let indexPath = collectionView.indexPath(for: cell) else { return }
+        guard let categoryToRemove = categoryItems?[indexPath.item] else { return }
+        
+        context.delete(categoryToRemove)
+        
+        do {
+            try context.save()
+        } catch {
+            
+        }
+        
+        fetchAllCategories()
+    }
+}
+

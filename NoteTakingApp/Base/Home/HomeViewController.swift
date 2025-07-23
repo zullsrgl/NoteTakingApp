@@ -7,7 +7,8 @@
 
 import PureLayout
 
-class HomeViewController: UIViewController {
+class HomeViewController: UIViewController{
+    let vc = CategoryViewController()
     
     private let stackContainerView: UIStackView = {
         let stackView = UIStackView()
@@ -23,6 +24,7 @@ class HomeViewController: UIViewController {
     
     private let searchBar: UISearchBar = {
         let searchView = UISearchBar()
+        searchView.layer.cornerRadius = 16
         searchView.placeholder = "Search anything"
         searchView.backgroundImage = UIImage()
         return searchView
@@ -35,7 +37,9 @@ class HomeViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         self.title = "Home"
+        
         collectionView.delegate = self
+        
         setUpUI()
     }
     
@@ -49,7 +53,7 @@ class HomeViewController: UIViewController {
         searchBar.autoSetDimension(.width, toSize: UIScreen.main.bounds.width)
         
         stackContainerView.addArrangedSubview(collectionView)
-        collectionView.autoSetDimension(.height, toSize: 32)
+        collectionView.autoSetDimension(.height, toSize: 64)
         collectionView.autoSetDimension(.width, toSize: UIScreen.main.bounds.width)
         
         stackContainerView.addArrangedSubview(noteCollectionView)
@@ -57,8 +61,13 @@ class HomeViewController: UIViewController {
 }
 
 extension HomeViewController: HomeCategoryCollectionViewDelegate {
+    
     func tappedAddNewCategoryButton() {
-        let vc = CategoryViewController()
-        navigationController?.pushViewController(vc, animated: true)
+        if let sheet = vc.sheetPresentationController {
+            sheet.detents = [.medium(), .large()]
+            sheet.prefersGrabberVisible = true
+            sheet.preferredCornerRadius = 20
+        }
+        present(vc, animated: true)
     }
 }

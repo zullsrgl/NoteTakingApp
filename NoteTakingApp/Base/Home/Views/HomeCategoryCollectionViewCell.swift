@@ -6,24 +6,45 @@
 //
 import PureLayout
 
+protocol HomeCategoryCollectionViewCellDelegate: AnyObject {
+    func homeCategoryCellDidTapDelete(_ cell: HomeCategoryCollectionViewCell)
+}
+
 class HomeCategoryCollectionViewCell: UICollectionViewCell {
     
     static let identifier = "homeCollectionViewCell"
+    weak var delegate: HomeCategoryCollectionViewCellDelegate?
+    
+    private let stackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.alignment = .top
+        stackView.distribution = .fillEqually
+        stackView.spacing = 2
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.isLayoutMarginsRelativeArrangement = true
+        stackView.layoutMargins = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
+        return stackView
+    }()
     
     private let categoryButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("all", for: .normal)
         button.tintColor = UIColor.label
-        button.layer.cornerRadius = 8
+        button.layer.cornerRadius = 12
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.label.cgColor
-        button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        button.sizeToFit()
         return button
     }()
     
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        
+        let interaction = UIContextMenuInteraction(delegate: self)
+        self.addInteraction(interaction)
+        
         setUpUI()
     }
     
@@ -32,8 +53,26 @@ class HomeCategoryCollectionViewCell: UICollectionViewCell {
     }
     
     private func setUpUI(){
-        self.addSubview(categoryButton)
-        categoryButton.autoAlignAxis(toSuperviewAxis: .horizontal)
-        categoryButton.autoSetDimension(.height, toSize: 24)
+        self.addSubview(stackView)
+        stackView.autoPinEdgesToSuperviewEdges()
+        
+        stackView.addArrangedSubview(categoryButton)
+    }
+    
+    func setUpUI(categoryName: String?, categoryColor: UIColor?){
+        categoryButton.setTitle(categoryName, for: .normal)
+        categoryButton.layer.borderColor = categoryColor?.cgColor
+    }
+}
+
+extension HomeCategoryCollectionViewCell: UIContextMenuInteractionDelegate {
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil){ _ in
+            let delete = UIAction(title: "Delete", image: UIImage(systemName: "trash")){ _ in
+                self.delegate?.homeCategoryCellDidTapDelete(self)
+                
+            }
+            return UIMenu(title: "", children: [delete])
+        }
     }
 }

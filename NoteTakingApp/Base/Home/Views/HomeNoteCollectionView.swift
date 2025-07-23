@@ -28,6 +28,15 @@ class HomeNoteCollectionView: UIView {
         return view
     }()
     
+    private let notesTitle: UILabel = {
+        var lbl = UILabel()
+        lbl.text = "Notes"
+        lbl.textColor = .label
+        lbl.textAlignment = .left
+        lbl.font = UIFont(name: "HelveticaNeue-Medium", size: 17)
+        return lbl
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         collectionView.delegate = self
@@ -37,8 +46,16 @@ class HomeNoteCollectionView: UIView {
     }
     
     private func setUpUI(){
+        
+        addSubview(notesTitle)
+        notesTitle.autoPinEdge(.left, to: .left, of: self)
+        notesTitle.autoPinEdge(.top, to: .top, of: self)
+        
         addSubview(collectionView)
-        collectionView.autoPinEdgesToSuperviewEdges()
+        collectionView.autoPinEdge(.top, to: .bottom, of: notesTitle, withOffset: 16)
+        collectionView.autoPinEdge(.left, to: .left, of: self)
+        collectionView.autoPinEdge(.right, to: .right, of: self)
+        collectionView.autoPinEdge(.bottom, to: .bottom, of: self)
         
     }
     
@@ -54,6 +71,10 @@ extension HomeNoteCollectionView: UICollectionViewDelegate, UICollectionViewData
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeNoteCollectionViewCell.identifire, for: indexPath) as! HomeNoteCollectionViewCell
+        if indexPath.row == 0 {
+            cell.createNote()
+        }
+        
         return cell
     }
     

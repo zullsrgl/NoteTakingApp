@@ -8,7 +8,8 @@
 import PureLayout
 
 protocol CategoryViewDelegate: AnyObject {
-    func clickedButton()
+    func colorButtonClicked()
+    func savedButton()
 }
 
 class CategoryView: UIView {
@@ -19,44 +20,65 @@ class CategoryView: UIView {
     private let stackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
-        stackView.alignment = .fill
-        stackView.distribution = .fill
-        stackView.spacing = 8
+        stackView.alignment = .top
+        stackView.distribution = .fillEqually
+        stackView.spacing = 32
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.isLayoutMarginsRelativeArrangement = true
         stackView.layoutMargins = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         return stackView
     }()
     
-    private var categoryTextField: UITextField = {
+    var categoryTextField: UITextField = {
+        var paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 0))
         var txt = UITextField()
         txt.placeholder = "Enter category name"
-        txt.font = .systemFont(ofSize: 18, weight: .medium)
-        txt.textAlignment = .center
+        txt.leftView = paddingView
+        txt.leftViewMode = .always
+        txt.font = .systemFont(ofSize: 14, weight: .medium)
+        txt.textAlignment = .left
         txt.layer.borderColor = UIColor.systemGray.cgColor
         txt.textColor = .label
         txt.layer.borderWidth = 1
-        txt.layer.cornerRadius = 4
+        txt.layer.cornerRadius = 16
         txt.translatesAutoresizingMaskIntoConstraints = false
         return txt
     }()
     
-     let colorButton: UIButton = {
+    private let colorButton: UIButton = {
         var button = UIButton()
-        button.setTitle("Click me", for: .normal)
-        button.setTitleColor(UIColor.systemGray, for: .normal)
+        button.setTitle("Pick Color", for: .normal)
+        button.backgroundColor = .systemBlue
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .bold)
         button.isUserInteractionEnabled = true
-        button.layer.borderColor = UIColor.systemGray.cgColor
-        button.layer.cornerRadius = 10
-        button.layer.borderWidth = 1
+        button.layer.cornerRadius = 16
+        button.clipsToBounds = true
         return button
     }()
     
+    let selectedColorView: UIView = {
+        var view = UIView()
+        view.layer.cornerRadius = 26
+        view.backgroundColor = .gray
+        return view
+    }()
+    
+    private let saveButton: UIButton = {
+        var button = UIButton()
+        button.setTitle("Save", for: .normal)
+        button.backgroundColor = .systemBlue
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .bold)
+        button.isUserInteractionEnabled = true
+        button.layer.cornerRadius = 16
+        button.clipsToBounds = true
+        return button
+    }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        colorButton.addTarget(self, action: #selector(selectColor), for: .touchUpInside)
+        colorButton.addTarget(self, action: #selector(colorButtonClicked), for: .touchUpInside)
+        saveButton.addTarget(self, action: #selector(saveCategory), for: .touchUpInside)
         
         setupUI()
     }
@@ -70,21 +92,37 @@ class CategoryView: UIView {
         addSubview(stackView)
         stackView.autoPinEdgesToSuperviewEdges()
         
-        stackView.addSubview(categoryTextField)
-        categoryTextField.autoPinEdge(.top, to: .top, of: self, withOffset: 40)
-        categoryTextField.autoPinEdge(.left, to: .left, of: self, withOffset: 20)
-        categoryTextField.autoPinEdge(.right, to: .right, of: self, withOffset: -20)
-        categoryTextField.autoSetDimension(.height, toSize: 36)
+        stackView.addArrangedSubview(categoryTextField)
+        categoryTextField.autoSetDimension(.height, toSize: 40)
+        categoryTextField.autoPinEdge(.left, to: .left, of: self)
+        categoryTextField.autoPinEdge(.right, to: .right, of: self)
         
-        stackView.addSubview(colorButton)
-        colorButton.autoPinEdge(.top, to: .bottom, of: categoryTextField,withOffset: 12)
-        colorButton.autoAlignAxis(toSuperviewAxis: .horizontal)
-        colorButton.autoAlignAxis(toSuperviewAxis: .vertical)
-        colorButton.autoSetDimension(.height, toSize: 124)
-        colorButton.autoSetDimension(.width, toSize: UIScreen.main.bounds.width - 40)
+        stackView.addArrangedSubview(colorButton)
+        colorButton.autoSetDimension(.height, toSize: 64)
+        colorButton.autoSetDimension(.width, toSize: 100)
+        
+        stackView.addSubview(selectedColorView)
+        selectedColorView.autoAlignAxis(.horizontal, toSameAxisOf: colorButton)
+        selectedColorView.autoSetDimension(.height, toSize: 52)
+        selectedColorView.autoSetDimension(.width, toSize: 52)
+        selectedColorView.autoPinEdge(.right, to: .right, of: self)
+        
+        stackView.setCustomSpacing(150, after: colorButton)
+        
+        stackView.addArrangedSubview(saveButton)
+        saveButton.autoPinEdge(.bottom, to: .bottom, of: stackView)
+        saveButton.autoPinEdge(.left, to: .left, of: stackView)
+        saveButton.autoPinEdge(.right, to: .right, of: stackView)
     }
     
-    @objc private func selectColor() {
-        delegate?.clickedButton()
+    @objc private func colorButtonClicked() {
+        delegate?.colorButtonClicked()
+    }
+    
+    @objc private func saveCategory() {
+        delegate?.savedButton()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2){
+            self.selectedColorView.backgroundColor = .gray
+        }
     }
 }
