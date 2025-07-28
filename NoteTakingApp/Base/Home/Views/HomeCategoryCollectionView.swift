@@ -9,12 +9,13 @@ import PureLayout
 
 protocol HomeCategoryCollectionViewDelegate: AnyObject {
     func tappedAddNewCategoryButton()
+    func categoryDeleted(item: Category)
 }
 
 class HomeCategoryCollectionView: UIView {
     
-    private let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     weak var delegate: HomeCategoryCollectionViewDelegate?
+    
     var categoryItems: [Category]?
     
     private let categoryTitle: UILabel = {
@@ -63,9 +64,7 @@ class HomeCategoryCollectionView: UIView {
         collectionView.register(HomeCategoryCollectionViewCell.self, forCellWithReuseIdentifier: HomeCategoryCollectionViewCell.identifier)
         
         addCategoryButton.addTarget(self, action: #selector(crateNewCategory), for: .touchUpInside)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleButtonTap), name: .didTapSaveButton, object: nil)
         
-        fetchAllCategories()
         
         setupViews()
     }
@@ -94,22 +93,11 @@ class HomeCategoryCollectionView: UIView {
         delegate?.tappedAddNewCategoryButton()
     }
     
-    @objc private func handleButtonTap(category: Category) {
-        fetchAllCategories()
+    func reloadData(categoryItems: [Category]) {
+        self.categoryItems = categoryItems
         collectionView.reloadData()
-        
     }
     
-    private func fetchAllCategories() {
-        do {
-            let categories = try context.fetch(Category.fetchRequest())
-            self.categoryItems = categories
-            self.collectionView.reloadData()
-            
-        } catch {
-            
-        }
-    }
 }
 
 extension HomeCategoryCollectionView: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
@@ -124,25 +112,24 @@ extension HomeCategoryCollectionView: UICollectionViewDelegate, UICollectionView
         cell.delegate = self
         
         let color = categoryItems?[indexPath.item].categoryColor?.decodeColor()
-        cell.setUpUI(categoryName: categoryItems?[indexPath.row].categoryName, categoryColor: color)
+        cell.setUpButton(categoryName: categoryItems?[indexPath.row].categoryName, categoryColor: color)
         return cell
     }
 }
 
 extension HomeCategoryCollectionView: HomeCategoryCollectionViewCellDelegate {
-    func homeCategoryCellDidTapDelete(_ cell: HomeCategoryCollectionViewCell) {
+    func homeCategoryCellDidTapDelete(cell: HomeCategoryCollectionViewCell) {
+        
         guard let indexPath = collectionView.indexPath(for: cell) else { return }
-        guard let categoryToRemove = categoryItems?[indexPath.item] else { return }
+        guard let categoryToRemove = categoryItems?[indexPath.row] else { return }
         
-        context.delete(categoryToRemove)
-        
-        do {
-            try context.save()
-        } catch {
-            
+        if indexPath.item == 0 {
+            self.showError(message: "This category cannot be deleted")
+            return
         }
         
-        fetchAllCategories()
+        delegate?.categoryDeleted(item: categoryToRemove)
+        collectionView.reloadData()
     }
 }
 

@@ -9,12 +9,13 @@ import PureLayout
 
 protocol CategoryViewDelegate: AnyObject {
     func colorButtonClicked()
-    func savedButton()
+    func saveCategoryButtonClicked()
 }
 
 class CategoryView: UIView {
     
     weak var delegate: CategoryViewDelegate?
+    
     var selectedColor: UIColor = UIColor.white
     
     private let stackView: UIStackView = {
@@ -120,7 +121,7 @@ class CategoryView: UIView {
     }
     
     @objc private func saveCategory() {
-        delegate?.savedButton()
+        delegate?.saveCategoryButtonClicked()
         DispatchQueue.main.asyncAfter(deadline: .now() + 2){
             self.selectedColorView.backgroundColor = .gray
         }

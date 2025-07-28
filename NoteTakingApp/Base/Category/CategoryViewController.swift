@@ -11,6 +11,12 @@ import CoreData
 
 class CategoryViewController: UIViewController {
     
+    private let categoryView = CategoryView()
+    
+    //    private let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    
+    private let viewModel = CategoryViewModel()
+    
     private let stackContainerView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
@@ -31,12 +37,6 @@ class CategoryViewController: UIViewController {
         lbl.font = .systemFont(ofSize: 20, weight: .bold)
         return lbl
     }()
-    
-    var categoryItems: [Category]?
-    
-    private let categoryView = CategoryView()
-    
-    private let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -67,46 +67,22 @@ class CategoryViewController: UIViewController {
             self.showError(message: "Please enter category name ")
             return
         }
+        guard let color = categoryView.selectedColorView.backgroundColor else { return}
         
-        if isCategoryExist(with: inputText){
-            
+        if viewModel.categoryExists(name: inputText){
             self.showError(message: "This category already exists")
             return
         }
+        viewModel.createCategory(categoryName: inputText, categoryColor: color)
+        self.showToast(message: "Successfully saved")
         
-        let newCategory = Category(context: context)
-        newCategory.categoryName = inputText
-        newCategory.categoryColor = categoryView.selectedColorView.backgroundColor?.encode()
-        
-        do {
-            try self.context.save()
-            self.showToast(message: "Successfully saved")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1){
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1){
-                
-                self.dismiss(animated: true)
-                self.categoryView.categoryTextField.placeholder = "Enter category name"
-                self.categoryView.categoryTextField.text = ""
-            }
-            NotificationCenter.default.post(name: .didTapSaveButton, object: nil)
-            
-        } catch {
-            print("fail: when client sadeved the category")
+            self.dismiss(animated: true)
+            self.categoryView.categoryTextField.placeholder = "Enter category name"
+            self.categoryView.categoryTextField.text = ""
         }
-    }
-    
-    private func isCategoryExist(with name: String) -> Bool {
-        
-        let fetchRequest: NSFetchRequest<Category> = Category.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "categoryName ==[c] %@", name)
-        
-        do {
-            let result = try context.fetch(fetchRequest)
-            return !result.isEmpty
-            
-        }catch {
-            return false
-        }
+        NotificationCenter.default.post(name: .didTapSaveButton, object: nil)
     }
 }
 
@@ -126,7 +102,7 @@ extension CategoryViewController: UIColorPickerViewControllerDelegate {
 }
 
 extension CategoryViewController: CategoryViewDelegate {
-    func savedButton() {
+    func saveCategoryButtonClicked() {
         saveCategory()
     }
 }

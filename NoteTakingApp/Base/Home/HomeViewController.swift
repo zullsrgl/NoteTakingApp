@@ -8,7 +8,8 @@
 import PureLayout
 
 class HomeViewController: UIViewController{
-    let vc = CategoryViewController()
+    
+    private let viewModel = HomeViewModel()
     
     private let stackContainerView: UIStackView = {
         let stackView = UIStackView()
@@ -37,8 +38,11 @@ class HomeViewController: UIViewController{
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         self.title = "Home"
-        
         collectionView.delegate = self
+        
+        collectionView.categoryItems = viewModel.getCategories()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(handleButtonTap), name: .didTapSaveButton, object: nil)
         
         setUpUI()
     }
@@ -58,11 +62,17 @@ class HomeViewController: UIViewController{
         
         stackContainerView.addArrangedSubview(noteCollectionView)
     }
+    
+    @objc private func handleButtonTap() {
+        let items = viewModel.getCategories()
+        collectionView.reloadData(categoryItems: items)
+    }
 }
 
 extension HomeViewController: HomeCategoryCollectionViewDelegate {
     
     func tappedAddNewCategoryButton() {
+        let vc = CategoryViewController()
         if let sheet = vc.sheetPresentationController {
             sheet.detents = [.medium(), .large()]
             sheet.prefersGrabberVisible = true
@@ -70,4 +80,10 @@ extension HomeViewController: HomeCategoryCollectionViewDelegate {
         }
         present(vc, animated: true)
     }
+    
+    func categoryDeleted(item: Category) {
+        viewModel.deleteCategories(category: item)
+        collectionView.categoryItems = viewModel.getCategories()
+    }
+    
 }
