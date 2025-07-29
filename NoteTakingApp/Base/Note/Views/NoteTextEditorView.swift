@@ -15,8 +15,8 @@ class NoteTextEditor: UIView {
         stackView.alignment = .fill
         stackView.distribution = .fillEqually
         stackView.spacing = 5
-        stackView.backgroundColor = .label
-        stackView.layer.cornerRadius = 10
+        stackView.backgroundColor = .systemBlue
+        stackView.layer.cornerRadius = 16
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.layoutMargins = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         stackView.isLayoutMarginsRelativeArrangement = true
@@ -77,9 +77,7 @@ class NoteTextEditor: UIView {
     
     private func setUpUI(){
         addSubview(stackView)
-        stackView.autoPinEdge(.left, to: .left, of: self, withOffset: 16)
-        stackView.autoPinEdge(.right, to: .right, of: self, withOffset: -16)
-        stackView.autoSetDimension(.height, toSize: 56)
+        stackView.autoPinEdgesToSuperviewEdges()
         
         stackView.addArrangedSubview(boldButton)
         stackView.addArrangedSubview(italicButton)

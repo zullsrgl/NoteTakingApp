@@ -62,7 +62,7 @@ final class CoreDataManager {
         saveContext()
     }
     
-    //MARK: filtreleme
+    //MARK: filtering process
     func categoryExists(categoryName: String) -> Bool {
         let request = Category.fetchRequest()
         request.predicate = NSPredicate(format: "categoryName ==[c] %@", categoryName)

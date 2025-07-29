@@ -18,6 +18,11 @@ class HomeCategoryCollectionView: UIView {
     
     var categoryItems: [Category]?
     
+    private let bgView: UIView = {
+        var view = UIView()
+        return view
+    }()
+    
     private let categoryTitle: UILabel = {
         var lbl = UILabel()
         lbl.text = "Categories"
@@ -74,18 +79,22 @@ class HomeCategoryCollectionView: UIView {
     }
     
     private func setupViews() {
-        addSubview(categoryTitle)
-        categoryTitle.autoPinEdge(.left, to: .left, of: self)
-        categoryTitle.autoPinEdge(.top, to: .top, of: self)
         
-        addSubview(collectionView)
-        collectionView.autoPinEdge(.left, to: .left, of: self)
+        addSubview(bgView)
+        bgView.autoPinEdgesToSuperviewEdges()
+        
+        bgView.addSubview(categoryTitle)
+        categoryTitle.autoPinEdge(.left, to: .left, of: bgView)
+        categoryTitle.autoPinEdge(.top, to: .top, of: bgView)
+        
+        bgView.addSubview(collectionView)
+        collectionView.autoPinEdge(.left, to: .left, of: bgView)
         collectionView.autoPinEdge(.top, to: .bottom, of: categoryTitle, withOffset: 8)
-        collectionView.autoPinEdge(.bottom, to: .bottom, of: self)
+        collectionView.autoPinEdge(.bottom, to: .bottom, of: bgView)
         
-        addSubview(addCategoryButton)
+        bgView.addSubview(addCategoryButton)
         addCategoryButton.autoPinEdge(.left, to: .right, of: collectionView, withOffset: 8)
-        addCategoryButton.autoPinEdge(.right, to: .right, of: self, withOffset: -4)
+        addCategoryButton.autoPinEdge(.right, to: .right, of: bgView, withOffset: -4)
         addCategoryButton.autoAlignAxis(.horizontal, toSameAxisOf: collectionView)
     }
     
@@ -114,6 +123,15 @@ extension HomeCategoryCollectionView: UICollectionViewDelegate, UICollectionView
         let color = categoryItems?[indexPath.item].categoryColor?.decodeColor()
         cell.setUpButton(categoryName: categoryItems?[indexPath.row].categoryName, categoryColor: color)
         return cell
+    }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        guard let text = categoryItems?[indexPath.item].categoryName else {return CGSize(width: 100, height: collectionView.bounds.height)}
+        
+        let font = UIFont.systemFont(ofSize: 14)
+        let padding: CGFloat = 16
+        let size = (text as NSString).size(withAttributes: [.font: font])
+        
+        return CGSize(width: size.width  + padding, height: 44)
     }
 }
 

@@ -12,9 +12,6 @@ import CoreData
 class CategoryViewController: UIViewController {
     
     private let categoryView = CategoryView()
-    
-    //    private let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-    
     private let viewModel = CategoryViewModel()
     
     private let stackContainerView: UIStackView = {

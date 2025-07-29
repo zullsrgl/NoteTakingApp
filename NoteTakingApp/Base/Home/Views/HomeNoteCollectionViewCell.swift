@@ -15,6 +15,7 @@ class HomeNoteCollectionViewCell: UICollectionViewCell {
         var btn = UIButton()
         btn.backgroundColor = .clear
         btn.layer.cornerRadius = 16
+        btn.isUserInteractionEnabled = false
         return btn
     }()
     
@@ -30,7 +31,6 @@ class HomeNoteCollectionViewCell: UICollectionViewCell {
         lbl.font = .systemFont(ofSize: 12, weight: .bold)
         lbl.textColor = .black
         lbl.textAlignment = .left
-        lbl.text = "Note Başlığı"
         lbl.numberOfLines = 1
         return lbl
     }()
@@ -64,7 +64,6 @@ class HomeNoteCollectionViewCell: UICollectionViewCell {
     }
     
     func createNote() {
-        
         let largeConfig = UIImage.SymbolConfiguration(pointSize: 30, weight: .bold)
         let image = UIImage(systemName: "plus.square.fill", withConfiguration: largeConfig)
         
@@ -77,8 +76,7 @@ class HomeNoteCollectionViewCell: UICollectionViewCell {
         
     }
     
-   private func resetCell() {
-        titleLabel.text = "Note Başlığı"
+    private func resetCell() {
         noteButton.setImage(nil, for: .normal)
         noteButton.layer.borderWidth = 0
         noteButton.backgroundColor = .clear

@@ -7,10 +7,17 @@
 
 import CoreData
 
+protocol HomeViewModelDelegate: AnyObject {
+    func categiresFetched(categories: [Category])
+}
+
 final class HomeViewModel {
     
-    func getCategories() -> [Category] {
-        return  CoreDataManager.shared.fetchAllCategories()
+    weak var delegate: HomeViewModelDelegate?
+    
+    func getCategories()  {
+       let categories =  CoreDataManager.shared.fetchAllCategories()
+        delegate?.categiresFetched(categories: categories)
     }
     
     func deleteCategories(category: Category) {

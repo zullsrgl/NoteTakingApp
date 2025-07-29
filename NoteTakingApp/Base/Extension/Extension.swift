@@ -7,7 +7,6 @@
 import UIKit
 
 //MARK: -Color
-
 extension UIColor {
     static var random: UIColor {
         return UIColor(
@@ -24,7 +23,6 @@ extension UIColor {
 }
 
 //MARK: -Data
-
 extension Data {
     func decodeColor() -> UIColor? {
         try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(self) as? UIColor
@@ -32,7 +30,6 @@ extension Data {
 }
 
 //MARK: -ViewController
-
 extension UIViewController {
     func showToast(message: String, duration: TimeInterval = 1.0){
         let toastLabel: UILabel = {
@@ -89,6 +86,14 @@ extension UIViewController {
         }){ _ in
             errorLabel.removeFromSuperview()
         }
+    }
+    func createBottomSheet(vc: UIViewController, animated: Bool = true) {
+        if let sheet = vc.sheetPresentationController {
+            sheet.detents = [.medium()]
+            sheet.prefersGrabberVisible = true
+            sheet.preferredCornerRadius = 20
+        }
+        present(vc, animated: true)
     }
 }
 

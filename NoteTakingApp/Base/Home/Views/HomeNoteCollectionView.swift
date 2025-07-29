@@ -7,7 +7,13 @@
 
 import PureLayout
 
+protocol HomeNoteCollectionViewDelegate: AnyObject {
+    func createNoteTapped()
+}
+
 class HomeNoteCollectionView: UIView {
+    
+    weak var delegate: HomeNoteCollectionViewDelegate?
     
     private let collectionView: UICollectionView = {
         var layout = UICollectionViewFlowLayout()
@@ -25,6 +31,7 @@ class HomeNoteCollectionView: UIView {
         view.scrollsToTop = false
         view.decelerationRate = .fast
         view.translatesAutoresizingMaskIntoConstraints = false
+        view.allowsSelection = true
         return view
     }()
     
@@ -39,8 +46,10 @@ class HomeNoteCollectionView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        
         collectionView.delegate = self
         collectionView.dataSource = self
+        
         collectionView.register(HomeNoteCollectionViewCell.self, forCellWithReuseIdentifier: HomeNoteCollectionViewCell.identifire)
         setUpUI()
     }
@@ -83,5 +92,11 @@ extension HomeNoteCollectionView: UICollectionViewDelegate, UICollectionViewData
         let width = (collectionView.bounds.width - 16) / numberOfItemsPerRow
         
         return CGSize(width: width, height: width)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if indexPath.item == 0 {
+            delegate?.createNoteTapped()
+        }
     }
 }

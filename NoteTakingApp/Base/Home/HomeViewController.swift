@@ -9,7 +9,7 @@ import PureLayout
 
 class HomeViewController: UIViewController{
     
-    private let viewModel = HomeViewModel()
+    private lazy var viewModel = HomeViewModel()
     
     private let stackContainerView: UIStackView = {
         let stackView = UIStackView()
@@ -31,16 +31,20 @@ class HomeViewController: UIViewController{
         return searchView
     }()
     
-    private let collectionView = HomeCategoryCollectionView()
-    private let noteCollectionView = HomeNoteCollectionView()
+    private let homeCategorieCollectionView = HomeCategoryCollectionView()
+    private let homeNoteCollectionView = HomeNoteCollectionView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemBackground
-        self.title = "Home"
-        collectionView.delegate = self
         
-        collectionView.categoryItems = viewModel.getCategories()
+        view.backgroundColor = .systemBackground
+        navigationItem.title = "Home"
+        
+        homeCategorieCollectionView.delegate = self
+        homeNoteCollectionView.delegate = self
+        viewModel.delegate = self
+        
+        viewModel.getCategories()
         
         NotificationCenter.default.addObserver(self, selector: #selector(handleButtonTap), name: .didTapSaveButton, object: nil)
         
@@ -56,16 +60,16 @@ class HomeViewController: UIViewController{
         searchBar.autoSetDimension(.height, toSize: 32)
         searchBar.autoSetDimension(.width, toSize: UIScreen.main.bounds.width)
         
-        stackContainerView.addArrangedSubview(collectionView)
-        collectionView.autoSetDimension(.height, toSize: 64)
-        collectionView.autoSetDimension(.width, toSize: UIScreen.main.bounds.width)
+        stackContainerView.addArrangedSubview(homeCategorieCollectionView)
+        homeCategorieCollectionView.autoSetDimension(.height, toSize: 64)
+        homeCategorieCollectionView.autoSetDimension(.width, toSize: UIScreen.main.bounds.width)
         
-        stackContainerView.addArrangedSubview(noteCollectionView)
+        stackContainerView.addArrangedSubview(homeNoteCollectionView)
     }
     
     @objc private func handleButtonTap() {
-        let items = viewModel.getCategories()
-        collectionView.reloadData(categoryItems: items)
+        viewModel.getCategories()
+     
     }
 }
 
@@ -73,17 +77,23 @@ extension HomeViewController: HomeCategoryCollectionViewDelegate {
     
     func tappedAddNewCategoryButton() {
         let vc = CategoryViewController()
-        if let sheet = vc.sheetPresentationController {
-            sheet.detents = [.medium(), .large()]
-            sheet.prefersGrabberVisible = true
-            sheet.preferredCornerRadius = 20
-        }
-        present(vc, animated: true)
+        createBottomSheet(vc: vc)
     }
     
     func categoryDeleted(item: Category) {
         viewModel.deleteCategories(category: item)
-        collectionView.categoryItems = viewModel.getCategories()
+        viewModel.getCategories()
     }
-    
+}
+
+extension HomeViewController: HomeViewModelDelegate{
+    func categiresFetched(categories: [Category]) {
+        homeCategorieCollectionView.reloadData(categoryItems: categories)
+    }
+}
+
+extension HomeViewController: HomeNoteCollectionViewDelegate{
+    func createNoteTapped() {
+        navigationController?.pushViewController(CreateNoteViewController(), animated: true)
+    }
 }
