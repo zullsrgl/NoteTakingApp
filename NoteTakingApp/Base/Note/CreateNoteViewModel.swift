@@ -20,4 +20,8 @@ final class CreateNoteViewModel {
         delegate?.fectedAllCategories(categories: categories)
         
     }
+    
+    func deleteCategory(category: Category){
+        CoreDataManager.shared.deleteCategory(category: category)
+    }
 }

@@ -80,8 +80,8 @@ final class CoreDataManager {
     
     func createDefaultCategory(){
         let defaultCategory = Category(context: context)
-        defaultCategory.categoryName = "Genarall"
-        defaultCategory.categoryColor = UIColor.systemBlue.encode()
+        defaultCategory.categoryName = "Genaral"
+        defaultCategory.categoryColor = Color.secondary.encode()
         
         do {
             try context.save()

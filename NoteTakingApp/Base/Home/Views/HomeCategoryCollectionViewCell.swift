@@ -37,6 +37,8 @@ class HomeCategoryCollectionViewCell: UICollectionViewCell {
         button.setContentHuggingPriority(.required, for: .horizontal)
         button.setContentCompressionResistancePriority(.required, for: .horizontal)
         button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 4, bottom: 8, right: 4)
+        button.isUserInteractionEnabled = false
+
         return button
     }()
     
@@ -46,7 +48,6 @@ class HomeCategoryCollectionViewCell: UICollectionViewCell {
         
         let interaction = UIContextMenuInteraction(delegate: self)
         self.addInteraction(interaction)
-        
         setUpUI()
     }
     

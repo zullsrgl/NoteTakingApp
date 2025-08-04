@@ -7,7 +7,18 @@
 
 import PureLayout
 
+protocol NoteTextEditorViewDelegate: AnyObject {
+    func didTapBoldButton()
+    func didTapItalicButton()
+    func didTapUnderlineButton()
+    func didTapJustifyButton()
+    func didTapJustifyLeftButton()
+    func didTapJustifyRightButton()
+}
+
 class NoteTextEditor: UIView {
+    
+    weak var delegate: NoteTextEditorViewDelegate?
     
     private let stackView : UIStackView = {
         let stackView = UIStackView()
@@ -44,7 +55,7 @@ class NoteTextEditor: UIView {
         return button
     }()
     
-
+    
     private let justifyButton: UIButton = {
         var button = UIButton()
         button.setImage(UIImage(systemName: "text.justify"), for: .normal)
@@ -68,6 +79,12 @@ class NoteTextEditor: UIView {
     
     override init(frame: CGRect){
         super.init(frame: frame)
+        boldButton.addTarget(self, action: #selector(boldText), for: .touchUpInside)
+        italicButton.addTarget(self, action: #selector(italicText), for: .touchUpInside)
+        underlineButton.addTarget(self, action: #selector(underlineText), for: .touchUpInside)
+        justifyRightButton.addTarget(self, action: #selector(textJustifyRightText), for: .touchUpInside)
+        justifyLeftButton.addTarget(self, action: #selector(textJustifyLeftText), for: .touchUpInside)
+        justifyButton.addTarget(self, action: #selector(textJustifyText), for: .touchUpInside)
         setUpUI()
     }
     
@@ -88,6 +105,26 @@ class NoteTextEditor: UIView {
         
     }
     
-    //TODO: -cratate objc func for editor button
-    
+    @objc func boldText(){
+        delegate?.didTapBoldButton()
+    }
+    @objc func italicText(){
+        delegate?.didTapItalicButton()
+        
+    }
+    @objc func underlineText(){
+        delegate?.didTapUnderlineButton()
+        
+    }
+    @objc func textJustifyRightText(){
+        delegate?.didTapJustifyRightButton()
+    }
+    @objc func textJustifyLeftText(){
+        delegate?.didTapJustifyLeftButton()
+        
+    }
+    @objc func textJustifyText(){
+        delegate?.didTapJustifyButton()
+        
+    }
 }

@@ -10,6 +10,7 @@ import PureLayout
 protocol HomeCategoryCollectionViewDelegate: AnyObject {
     func tappedAddNewCategoryButton()
     func categoryDeleted(item: Category)
+    func didSelectCategory(categoryName: String)
 }
 
 class HomeCategoryCollectionView: UIView {
@@ -47,6 +48,8 @@ class HomeCategoryCollectionView: UIView {
         view.contentInsetAdjustmentBehavior = .never
         view.scrollsToTop = false
         view.decelerationRate = .fast
+        view.isUserInteractionEnabled = true
+        view.isHidden = false
         return view
     }()
     
@@ -56,7 +59,7 @@ class HomeCategoryCollectionView: UIView {
         button.tintColor = .systemGreen
         button.layer.cornerRadius = 4
         button.layer.borderWidth = 1
-        button.layer.borderColor = UIColor.systemGreen.cgColor
+        button.layer.borderColor = Color.primary.cgColor
         return button
     }()
     
@@ -124,6 +127,7 @@ extension HomeCategoryCollectionView: UICollectionViewDelegate, UICollectionView
         cell.setUpButton(categoryName: categoryItems?[indexPath.row].categoryName, categoryColor: color)
         return cell
     }
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         guard let text = categoryItems?[indexPath.item].categoryName else {return CGSize(width: 100, height: collectionView.bounds.height)}
         
@@ -132,6 +136,11 @@ extension HomeCategoryCollectionView: UICollectionViewDelegate, UICollectionView
         let size = (text as NSString).size(withAttributes: [.font: font])
         
         return CGSize(width: size.width  + padding, height: 44)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let selectCategory = categoryItems?[indexPath.item].categoryName else { return }
+        delegate?.didSelectCategory(categoryName: selectCategory)
     }
 }
 
@@ -145,7 +154,6 @@ extension HomeCategoryCollectionView: HomeCategoryCollectionViewCellDelegate {
             self.showError(message: "This category cannot be deleted")
             return
         }
-        
         delegate?.categoryDeleted(item: categoryToRemove)
         collectionView.reloadData()
     }

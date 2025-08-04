@@ -90,6 +90,10 @@ extension HomeViewController: HomeViewModelDelegate{
     func categiresFetched(categories: [Category]) {
         homeCategorieCollectionView.reloadData(categoryItems: categories)
     }
+    
+    func didSelectCategory(categoryName: String) {
+        //TODO: filter
+    }
 }
 
 extension HomeViewController: HomeNoteCollectionViewDelegate{

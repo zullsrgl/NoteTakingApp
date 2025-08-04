@@ -111,6 +111,7 @@ class CategoryView: UIView {
         stackView.setCustomSpacing(150, after: colorButton)
         
         stackView.addArrangedSubview(saveButton)
+        saveButton.autoSetDimension(.height, toSize: 52)
         saveButton.autoPinEdge(.bottom, to: .bottom, of: stackView)
         saveButton.autoPinEdge(.left, to: .left, of: stackView)
         saveButton.autoPinEdge(.right, to: .right, of: stackView)
