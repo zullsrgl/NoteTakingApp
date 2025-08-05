@@ -140,11 +140,11 @@ class NoteView: UIView {
                     if let font = attrs[.font] as? UIFont {
                         let isBold = font.fontDescriptor.symbolicTraits.contains(.traitBold)
                         let newFont = isBold
-                        ? UIFont.systemFont(ofSize: font.pointSize)
-                        : UIFont.boldSystemFont(ofSize: font.pointSize)
+                            ? UIFont.systemFont(ofSize: font.pointSize)
+                            : UIFont.boldSystemFont(ofSize: font.pointSize)
                         newAttributes[.font] = newFont
                     }
-                    
+
                 case .italic:
                     if let font = attrs[.font] as? UIFont {
                         let isItalic = font.fontDescriptor.symbolicTraits.contains(.traitItalic)
@@ -153,7 +153,7 @@ class NoteView: UIView {
                         ) ?? font.fontDescriptor
                         newAttributes[.font] = UIFont(descriptor: descriptor, size: font.pointSize)
                     }
-                    
+
                 case .underline:
                     let current = (attrs[.underlineStyle] as? Int) ?? 0
                     if current == NSUnderlineStyle.single.rawValue {
@@ -161,6 +161,21 @@ class NoteView: UIView {
                     } else {
                         newAttributes[.underlineStyle] = NSUnderlineStyle.single.rawValue
                     }
+
+                case .justifyLeft:
+                    let paragraph = NSMutableParagraphStyle()
+                    paragraph.alignment = .left
+                    newAttributes[.paragraphStyle] = paragraph
+
+                case .justifyRight:
+                    let paragraph = NSMutableParagraphStyle()
+                    paragraph.alignment = .right
+                    newAttributes[.paragraphStyle] = paragraph
+
+                case .justify:
+                    let paragraph = NSMutableParagraphStyle()
+                    paragraph.alignment = .center
+                    newAttributes[.paragraphStyle] = paragraph
                 }
                 
                 mutableText.setAttributes(newAttributes, range: subRange)
@@ -188,15 +203,15 @@ extension NoteView: NoteTextEditorViewDelegate{
     }
     
     func didTapJustifyButton() {
-        print("")
+        applyStyle(.justify)
     }
     
     func didTapJustifyLeftButton() {
-        print("")
+        applyStyle(.justifyLeft)
     }
     
     func didTapJustifyRightButton() {
-        print("")
+        applyStyle(.justifyRight)
     }
     
 }
@@ -211,6 +226,7 @@ extension NoteView: UITextViewDelegate {
         if typingStyles.contains(.bold) {
             descriptor = descriptor.withSymbolicTraits([.traitBold]) ?? descriptor
         }
+        
         if typingStyles.contains(.italic) {
             descriptor = descriptor.withSymbolicTraits([.traitItalic]) ?? descriptor
         }

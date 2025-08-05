@@ -42,4 +42,7 @@ enum TextStyle {
     case bold
     case italic
     case underline
+    case justifyRight
+    case justifyLeft
+    case justify
 }
