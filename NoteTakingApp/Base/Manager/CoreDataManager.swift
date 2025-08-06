@@ -31,6 +31,7 @@ final class CoreDataManager {
         if context.hasChanges {
             do {
                 try context.save()
+                NotificationCenter.default.post(name: .tappedCategorySaveButton, object: nil)
             } catch {
                 print("contex kaydedilemedi")
             }

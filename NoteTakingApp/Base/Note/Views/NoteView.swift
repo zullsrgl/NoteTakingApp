@@ -64,12 +64,13 @@ class NoteView: UIView {
     private let categoryLabel: PaddingLabel = {
         var lbl = PaddingLabel()
         lbl.layer.cornerRadius = 16
+        lbl.layer.borderWidth = 1
         lbl.text = "General"
         lbl.layer.borderColor = UIColor.systemGray2.cgColor
-        lbl.layer.borderWidth = 1
         lbl.textAlignment = .center
         lbl.translatesAutoresizingMaskIntoConstraints  = false
         lbl.font = .systemFont(ofSize: 14)
+        lbl.clipsToBounds = true
         return lbl
     }()
     
@@ -112,8 +113,12 @@ class NoteView: UIView {
         categoryLabel.autoPinEdge(.right, to: .right, of: textView, withOffset: -16)
     }
     
-    func selectedCategory(catgoryName: String){
-        categoryLabel.text = catgoryName
+    func selectedCategory(category: Category){
+        
+        let color =  category.categoryColor?.decodeColor()
+        categoryLabel.text = category.categoryName
+        categoryLabel.backgroundColor = color
+        categoryLabel.layer.borderColor =  color?.cgColor
     }
     
     func applyStyle(_ style: TextStyle) {

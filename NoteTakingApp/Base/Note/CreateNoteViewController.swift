@@ -30,7 +30,8 @@ class CreateNoteViewController: UIViewController {
         view.backgroundColor = .systemBackground
         navigationItem.title = "Take a note"
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "arrow.backward"), style: .plain, target: self, action: #selector(goBack))
-        NotificationCenter.default.addObserver(self, selector: #selector(handleButtonTap), name: .didTapSaveButton, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(tappedCategorySaveButton), name: .tappedCategorySaveButton, object: nil)
         
         homeCategoryCollectionView.delegate = self
         viewModel.delegate = self
@@ -52,7 +53,7 @@ class CreateNoteViewController: UIViewController {
         stackContainerView.addArrangedSubview(noteView)
     }
     
-    @objc private func handleButtonTap() {
+    @objc private func tappedCategorySaveButton() {
         viewModel.fetchAllCategories()
     }
     
@@ -69,6 +70,9 @@ extension CreateNoteViewController: NoteViewModelDelegate {
 
 
 extension CreateNoteViewController: HomeCategoryCollectionViewDelegate {
+    func didSelectCategory(category: Category) {
+        noteView.selectedCategory(category: category)
+    }
     
     func tappedAddNewCategoryButton() {
         let vc = CategoryViewController()
@@ -79,9 +83,5 @@ extension CreateNoteViewController: HomeCategoryCollectionViewDelegate {
         viewModel.deleteCategory(category: item)
         viewModel.fetchAllCategories()
         
-    }
-    
-    func didSelectCategory(categoryName: String) {
-        noteView.selectedCategory(catgoryName: categoryName)
     }
 }

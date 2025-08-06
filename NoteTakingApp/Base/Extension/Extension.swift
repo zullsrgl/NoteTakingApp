@@ -46,9 +46,8 @@ extension UIViewController {
         }()
         
         self.view.addSubview(toastLabel)
-        toastLabel.autoPinEdge(.left, to: .left, of: view, withOffset: 32)
-        toastLabel.autoPinEdge(.right, to: .right, of: view, withOffset: -32)
-        toastLabel.autoPinEdge(.bottom, to: .bottom, of: view, withOffset: -100)
+        toastLabel.autoAlignAxis(toSuperviewAxis: .horizontal)
+        toastLabel.autoAlignAxis(toSuperviewAxis: .vertical)
         
         toastLabel.autoSetDimension(.height, toSize: 40)
         
@@ -75,9 +74,8 @@ extension UIViewController {
         }()
         
         self.view.addSubview(errorLabel)
-        errorLabel.autoPinEdge(.left, to: .left, of: view, withOffset: 32)
-        errorLabel.autoPinEdge(.right, to: .right, of: view, withOffset: -32)
-        errorLabel.autoPinEdge(.bottom, to: .bottom, of: view, withOffset: -100)
+        errorLabel.autoAlignAxis(toSuperviewAxis: .horizontal)
+        errorLabel.autoAlignAxis(toSuperviewAxis: .vertical)
         
         errorLabel.autoSetDimension(.height, toSize: 40)
         
@@ -99,7 +97,7 @@ extension UIViewController {
 
 //MARK: -Notication
 extension Notification.Name {
-    static let didTapSaveButton = Notification.Name("didTapSaveButton")
+    static let tappedCategorySaveButton = Notification.Name("tappedCategorySaveButton")
 }
 
 //MARK: -UIView
@@ -120,9 +118,8 @@ extension UIView {
         }()
         
         self.addSubview(errorLabel)
-        errorLabel.autoPinEdge(.left, to: .left, of: self, withOffset: 32)
-        errorLabel.autoPinEdge(.right, to: .right, of: self, withOffset: -32)
-        errorLabel.autoPinEdge(.bottom, to: .bottom, of: self, withOffset: -100)
+        errorLabel.autoAlignAxis(toSuperviewAxis: .horizontal)
+        errorLabel.autoAlignAxis(toSuperviewAxis: .vertical)
         
         errorLabel.autoSetDimension(.height, toSize: 40)
         

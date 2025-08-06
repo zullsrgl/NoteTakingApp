@@ -15,18 +15,6 @@ class HomeCategoryCollectionViewCell: UICollectionViewCell {
     static let identifier = "homeCollectionViewCell"
     weak var delegate: HomeCategoryCollectionViewCellDelegate?
     
-    private let stackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .horizontal
-        stackView.alignment = .top
-        stackView.distribution = .equalSpacing
-        stackView.spacing = 8
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.isLayoutMarginsRelativeArrangement = true
-        stackView.layoutMargins = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
-        return stackView
-    }()
-    
     private let categoryButton: UIButton = {
         let button = UIButton(type: .system)
         button.tintColor = UIColor.label
@@ -36,7 +24,6 @@ class HomeCategoryCollectionViewCell: UICollectionViewCell {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setContentHuggingPriority(.required, for: .horizontal)
         button.setContentCompressionResistancePriority(.required, for: .horizontal)
-        button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 4, bottom: 8, right: 4)
         button.isUserInteractionEnabled = false
 
         return button
@@ -56,15 +43,13 @@ class HomeCategoryCollectionViewCell: UICollectionViewCell {
     }
     
     private func setUpUI(){
-        self.addSubview(stackView)
-        stackView.autoPinEdgesToSuperviewEdges()
-        
-        stackView.addArrangedSubview(categoryButton)
+        self.addSubview(categoryButton)
+        categoryButton.autoPinEdgesToSuperviewEdges()
     }
     
-    func setUpButton(categoryName: String?, categoryColor: UIColor?){
-        categoryButton.setTitle(categoryName, for: .normal)
-        categoryButton.layer.borderColor = categoryColor?.cgColor
+    func setUpButton(categories: Category?){
+        categoryButton.setTitle(categories?.categoryName, for: .normal)
+        categoryButton.layer.borderColor  = categories?.categoryColor?.decodeColor()?.cgColor
     }
 }
 

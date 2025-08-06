@@ -10,7 +10,7 @@ import PureLayout
 protocol HomeCategoryCollectionViewDelegate: AnyObject {
     func tappedAddNewCategoryButton()
     func categoryDeleted(item: Category)
-    func didSelectCategory(categoryName: String)
+    func didSelectCategory(category: Category)
 }
 
 class HomeCategoryCollectionView: UIView {
@@ -92,7 +92,7 @@ class HomeCategoryCollectionView: UIView {
         
         bgView.addSubview(collectionView)
         collectionView.autoPinEdge(.left, to: .left, of: bgView)
-        collectionView.autoPinEdge(.top, to: .bottom, of: categoryTitle, withOffset: 8)
+        collectionView.autoPinEdge(.top, to: .bottom, of: categoryTitle)
         collectionView.autoPinEdge(.bottom, to: .bottom, of: bgView)
         
         bgView.addSubview(addCategoryButton)
@@ -123,8 +123,7 @@ extension HomeCategoryCollectionView: UICollectionViewDelegate, UICollectionView
         
         cell.delegate = self
         
-        let color = categoryItems?[indexPath.item].categoryColor?.decodeColor()
-        cell.setUpButton(categoryName: categoryItems?[indexPath.row].categoryName, categoryColor: color)
+        cell.setUpButton(categories: categoryItems?[indexPath.item])
         return cell
     }
     
@@ -135,12 +134,12 @@ extension HomeCategoryCollectionView: UICollectionViewDelegate, UICollectionView
         let padding: CGFloat = 16
         let size = (text as NSString).size(withAttributes: [.font: font])
         
-        return CGSize(width: size.width  + padding, height: 44)
+        return CGSize(width: size.width  + padding, height: 64 - categoryTitle.bounds.height - 8)
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let selectCategory = categoryItems?[indexPath.item].categoryName else { return }
-        delegate?.didSelectCategory(categoryName: selectCategory)
+        guard let item = categoryItems?[indexPath.item] else { return }
+        delegate?.didSelectCategory(category: item)
     }
 }
 

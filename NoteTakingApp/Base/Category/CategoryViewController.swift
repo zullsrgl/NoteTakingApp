@@ -60,30 +60,32 @@ class CategoryViewController: UIViewController {
     
     @objc private func saveCategory() {
         
-        guard let inputText = categoryView.categoryTextField.text, !inputText.isEmpty else  {
+        guard let inputText = categoryView.getTextField(), !inputText.isEmpty else  {
             self.showError(message: "Please enter category name ")
             return
         }
-        guard let color = categoryView.selectedColorView.backgroundColor else { return}
         
         if viewModel.categoryExists(name: inputText){
             self.showError(message: "This category already exists")
             return
         }
-        viewModel.createCategory(categoryName: inputText, categoryColor: color)
+        viewModel.createCategory(categoryName: inputText, categoryColor: categoryView.selectedColor)
         self.showToast(message: "Successfully saved")
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1){
-            
             self.dismiss(animated: true)
-            self.categoryView.categoryTextField.placeholder = "Enter category name"
-            self.categoryView.categoryTextField.text = ""
         }
-        NotificationCenter.default.post(name: .didTapSaveButton, object: nil)
     }
 }
 
 extension CategoryViewController: UIColorPickerViewControllerDelegate {
+    func colorPickerViewControllerDidSelectColor(_ viewController: UIColorPickerViewController){
+        let color = viewController.selectedColor
+        categoryView.selectedColor = color
+    }
+}
+
+extension CategoryViewController: CategoryViewDelegate {
     func colorButtonClicked() {
         let colorPicker = UIColorPickerViewController()
         colorPicker.delegate = self
@@ -91,14 +93,6 @@ extension CategoryViewController: UIColorPickerViewControllerDelegate {
         
     }
     
-    func colorPickerViewControllerDidSelectColor(_ viewController: UIColorPickerViewController){
-        let color = viewController.selectedColor
-        categoryView.selectedColor = color
-        categoryView.selectedColorView.backgroundColor = color
-    }
-}
-
-extension CategoryViewController: CategoryViewDelegate {
     func saveCategoryButtonClicked() {
         saveCategory()
     }

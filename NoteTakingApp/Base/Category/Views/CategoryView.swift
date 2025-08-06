@@ -16,7 +16,11 @@ class CategoryView: UIView {
     
     weak var delegate: CategoryViewDelegate?
     
-    var selectedColor: UIColor = UIColor.white
+    var selectedColor: UIColor = Color.white{
+        didSet{
+            selectedColorView.backgroundColor = selectedColor
+        }
+    }
     
     private let stackView: UIStackView = {
         let stackView = UIStackView()
@@ -30,7 +34,7 @@ class CategoryView: UIView {
         return stackView
     }()
     
-    var categoryTextField: UITextField = {
+    private let categoryTextField: UITextField = {
         var paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 0))
         var txt = UITextField()
         txt.placeholder = "Enter category name"
@@ -57,7 +61,7 @@ class CategoryView: UIView {
         return button
     }()
     
-    let selectedColorView: UIView = {
+    private let selectedColorView: UIView = {
         var view = UIView()
         view.layer.cornerRadius = 26
         view.backgroundColor = .gray
@@ -82,10 +86,6 @@ class CategoryView: UIView {
         saveButton.addTarget(self, action: #selector(saveCategory), for: .touchUpInside)
         
         setupUI()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
     
     private func setupUI() {
@@ -117,6 +117,10 @@ class CategoryView: UIView {
         saveButton.autoPinEdge(.right, to: .right, of: stackView)
     }
     
+    func getTextField() -> String? {
+        return categoryTextField.text
+    }
+    
     @objc private func colorButtonClicked() {
         delegate?.colorButtonClicked()
     }
@@ -126,5 +130,9 @@ class CategoryView: UIView {
         DispatchQueue.main.asyncAfter(deadline: .now() + 2){
             self.selectedColorView.backgroundColor = .gray
         }
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }

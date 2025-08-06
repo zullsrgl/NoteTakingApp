@@ -46,7 +46,7 @@ class HomeViewController: UIViewController{
         
         viewModel.getCategories()
         
-        NotificationCenter.default.addObserver(self, selector: #selector(handleButtonTap), name: .didTapSaveButton, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(tappedCategorySaveButton), name: .tappedCategorySaveButton, object: nil)
         
         setUpUI()
     }
@@ -67,13 +67,17 @@ class HomeViewController: UIViewController{
         stackContainerView.addArrangedSubview(homeNoteCollectionView)
     }
     
-    @objc private func handleButtonTap() {
+    @objc private func tappedCategorySaveButton() {
         viewModel.getCategories()
      
     }
 }
 
 extension HomeViewController: HomeCategoryCollectionViewDelegate {
+    func didSelectCategory(category: Category) {
+        //TODO: filter
+    }
+    
     
     func tappedAddNewCategoryButton() {
         let vc = CategoryViewController()
@@ -89,10 +93,6 @@ extension HomeViewController: HomeCategoryCollectionViewDelegate {
 extension HomeViewController: HomeViewModelDelegate{
     func categiresFetched(categories: [Category]) {
         homeCategorieCollectionView.reloadData(categoryItems: categories)
-    }
-    
-    func didSelectCategory(categoryName: String) {
-        //TODO: filter
     }
 }
 
