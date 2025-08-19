@@ -7,7 +7,13 @@
 
 import PureLayout
 
+protocol NoteViewDelegate: AnyObject {
+    func noteSaveButtonClicked()
+}
+
 class NoteView: UIView {
+    
+    weak var delegate: NoteViewDelegate?
     
     private let stackView: UIStackView = {
         let stackView = UIStackView()
@@ -20,6 +26,7 @@ class NoteView: UIView {
         stackView.isLayoutMarginsRelativeArrangement = true
         return stackView
     }()
+    
     private let bgView: UIView = {
         var view = UIView()
         return view
@@ -76,9 +83,20 @@ class NoteView: UIView {
     
     override init(frame: CGRect){
         super.init(frame: frame)
+        
         noteTextEditorView.delegate = self
         textView.delegate = self
+        
+        saveButton.addTarget(self, action: #selector(saveNote), for: .touchUpInside)
         setUpUI()
+    }
+    
+    @objc private func saveNote(){
+        delegate?.noteSaveButtonClicked()
+    }
+    
+    func getNoteText() -> String {
+        return textView.text
     }
     
     required init?(coder: NSCoder) {
@@ -113,15 +131,14 @@ class NoteView: UIView {
         categoryLabel.autoPinEdge(.right, to: .right, of: textView, withOffset: -16)
     }
     
-    func selectedCategory(category: Category){
-        
-        let color =  category.categoryColor?.decodeColor()
-        categoryLabel.text = category.categoryName
+    func selectedCategory(category: Category?){
+        let color =  category?.categoryColor?.decodeColor()
+        categoryLabel.text = category?.categoryName
         categoryLabel.backgroundColor = color
         categoryLabel.layer.borderColor =  color?.cgColor
     }
     
-    func applyStyle(_ style: TextStyle) {
+    private func applyStyle(_ style: TextStyle) {
         let selectedRange = textView.selectedRange
         
         if selectedRange.length > 0 {
@@ -135,9 +152,11 @@ class NoteView: UIView {
         }
         
         func toggleStyle(_ style: TextStyle, for range: NSRange) {
+            
             let mutableText = NSMutableAttributedString(attributedString: textView.attributedText)
             
             mutableText.enumerateAttributes(in: range, options: []) { attrs, subRange, _ in
+                
                 var newAttributes = attrs
                 
                 switch style {
@@ -145,11 +164,11 @@ class NoteView: UIView {
                     if let font = attrs[.font] as? UIFont {
                         let isBold = font.fontDescriptor.symbolicTraits.contains(.traitBold)
                         let newFont = isBold
-                            ? UIFont.systemFont(ofSize: font.pointSize)
-                            : UIFont.boldSystemFont(ofSize: font.pointSize)
+                        ? UIFont.systemFont(ofSize: font.pointSize)
+                        : UIFont.boldSystemFont(ofSize: font.pointSize)
                         newAttributes[.font] = newFont
                     }
-
+                    
                 case .italic:
                     if let font = attrs[.font] as? UIFont {
                         let isItalic = font.fontDescriptor.symbolicTraits.contains(.traitItalic)
@@ -158,7 +177,7 @@ class NoteView: UIView {
                         ) ?? font.fontDescriptor
                         newAttributes[.font] = UIFont(descriptor: descriptor, size: font.pointSize)
                     }
-
+                    
                 case .underline:
                     let current = (attrs[.underlineStyle] as? Int) ?? 0
                     if current == NSUnderlineStyle.single.rawValue {
@@ -166,24 +185,24 @@ class NoteView: UIView {
                     } else {
                         newAttributes[.underlineStyle] = NSUnderlineStyle.single.rawValue
                     }
-
+                    
                 case .justifyLeft:
                     let paragraph = NSMutableParagraphStyle()
                     paragraph.alignment = .left
                     newAttributes[.paragraphStyle] = paragraph
-
+                    
                 case .justifyRight:
                     let paragraph = NSMutableParagraphStyle()
                     paragraph.alignment = .right
                     newAttributes[.paragraphStyle] = paragraph
-
+                    
                 case .justify:
                     let paragraph = NSMutableParagraphStyle()
                     paragraph.alignment = .center
                     newAttributes[.paragraphStyle] = paragraph
                 }
                 
-                mutableText.setAttributes(newAttributes, range: subRange)
+                mutableText.addAttributes(newAttributes, range: subRange)
             }
             
             textView.attributedText = mutableText

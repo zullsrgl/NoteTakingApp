@@ -20,6 +20,8 @@ class CreateNoteViewController: UIViewController {
         stackView.isLayoutMarginsRelativeArrangement = true
         return stackView
     }()
+    private var selectedCategory: Category?
+    
     private let noteTitleView = NoteTitleView()
     private let homeCategoryCollectionView = HomeCategoryCollectionView()
     private let noteView = NoteView()
@@ -31,9 +33,11 @@ class CreateNoteViewController: UIViewController {
         navigationItem.title = "Take a note"
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "arrow.backward"), style: .plain, target: self, action: #selector(goBack))
         
-        NotificationCenter.default.addObserver(self, selector: #selector(tappedCategorySaveButton), name: .tappedCategorySaveButton, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(tappedCategorySaveButton), name: .contextSavedSuccessfully, object: nil)
         
         homeCategoryCollectionView.delegate = self
+        noteView.delegate = self
+        
         viewModel.delegate = self
         viewModel.fetchAllCategories()
         
@@ -71,7 +75,8 @@ extension CreateNoteViewController: NoteViewModelDelegate {
 
 extension CreateNoteViewController: HomeCategoryCollectionViewDelegate {
     func didSelectCategory(category: Category) {
-        noteView.selectedCategory(category: category)
+        selectedCategory = category
+        noteView.selectedCategory(category: selectedCategory)
     }
     
     func tappedAddNewCategoryButton() {
@@ -83,5 +88,29 @@ extension CreateNoteViewController: HomeCategoryCollectionViewDelegate {
         viewModel.deleteCategory(category: item)
         viewModel.fetchAllCategories()
         
+    }
+}
+
+extension CreateNoteViewController: NoteViewDelegate {
+    func noteSaveButtonClicked() {
+        let note = noteView.getNoteText()
+        
+        guard let noteTitle = noteTitleView.getNoteTitle(), !noteTitle.isEmpty else {
+            self.showError(message: "please enter note title")
+            return
+        }
+        
+        guard let category = selectedCategory else {
+            self.showError(message: "please select a category")
+            return
+        }
+        
+        viewModel.saveNote(title: noteTitle, category: category, note: note)
+        
+        self.showToast(message: "Note saved successfully")
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            self.navigationController?.popViewController(animated: true)
+        }
     }
 }

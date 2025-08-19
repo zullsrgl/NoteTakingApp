@@ -6,6 +6,7 @@
 //
 
 import PureLayout
+import CoreData
 
 class HomeViewController: UIViewController{
     
@@ -45,8 +46,9 @@ class HomeViewController: UIViewController{
         viewModel.delegate = self
         
         viewModel.getCategories()
+        viewModel.getAllNotes()
         
-        NotificationCenter.default.addObserver(self, selector: #selector(tappedCategorySaveButton), name: .tappedCategorySaveButton, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(tappedCategorySaveButton), name: .contextSavedSuccessfully, object: nil)
         
         setUpUI()
     }
@@ -91,12 +93,20 @@ extension HomeViewController: HomeCategoryCollectionViewDelegate {
 }
 
 extension HomeViewController: HomeViewModelDelegate{
-    func categiresFetched(categories: [Category]) {
+    func notesFetched(notes: [Note]) {
+        homeNoteCollectionView.noteItem = notes
+    }
+    
+    func categoriesFetched(categories: [Category]) {
         homeCategorieCollectionView.reloadData(categoryItems: categories)
     }
 }
 
 extension HomeViewController: HomeNoteCollectionViewDelegate{
+    func noteDetailTapped() {
+        navigationController?.pushViewController(NoteDetailViewController(), animated: true)
+    }
+    
     func createNoteTapped() {
         navigationController?.pushViewController(CreateNoteViewController(), animated: true)
     }

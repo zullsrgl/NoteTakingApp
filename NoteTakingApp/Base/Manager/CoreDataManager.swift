@@ -16,7 +16,7 @@ final class CoreDataManager {
         let container = NSPersistentContainer(name: "NoteTakingApp")
         container.loadPersistentStores { _ , error in
             if let error = error {
-                fatalError("Core data yüklmesi sırasında hata oluştu: \(error)")
+                fatalError("Core data loading is fail \(error)")
             }
         }
         return container
@@ -31,14 +31,14 @@ final class CoreDataManager {
         if context.hasChanges {
             do {
                 try context.save()
-                NotificationCenter.default.post(name: .tappedCategorySaveButton, object: nil)
+                NotificationCenter.default.post(name: .contextSavedSuccessfully, object: nil)
             } catch {
                 print("contex kaydedilemedi")
             }
         }
     }
     
-    //MARK: crate
+    //MARK: create
     func createCategory(name: String, color: UIColor) {
         let category = Category(context: context)
         category.categoryName = name
@@ -72,7 +72,7 @@ final class CoreDataManager {
             let result = try context.fetch(request)
             return !result.isEmpty
         } catch {
-            print("Kategori aranırken hata oluştu: \(error.localizedDescription)")
+            print("categori not found \(error.localizedDescription)")
             return false
         }
     }
@@ -92,4 +92,30 @@ final class CoreDataManager {
         }
     }
     
+    //MARK: Create Note
+    func createNote(title: String, category: Category?, note: String) {
+        let newNote = Note(context: context)
+        
+        newNote.noteTitle = title
+        newNote.note = note
+        newNote.category = category
+//        newNote.styledText = style
+        saveContext()
+    }
+    
+    //MARK: Fetch all note
+    func fetchAllNotes() -> [Note]{
+        let request: NSFetchRequest = Note.fetchRequest()
+        do {
+            return try context.fetch(request)
+        } catch {
+            return []
+        }
+    }
+    
+    //MARK: delete note
+    func deleteNote(note: Note){
+        context.delete(note)
+        saveContext()
+    }
 }

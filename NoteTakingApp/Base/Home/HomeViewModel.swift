@@ -8,7 +8,8 @@
 import CoreData
 
 protocol HomeViewModelDelegate: AnyObject {
-    func categiresFetched(categories: [Category])
+    func categoriesFetched(categories: [Category])
+    func notesFetched(notes: [Note])
 }
 
 final class HomeViewModel {
@@ -16,11 +17,20 @@ final class HomeViewModel {
     weak var delegate: HomeViewModelDelegate?
     
     func getCategories()  {
-       let categories =  CoreDataManager.shared.fetchAllCategories()
-        delegate?.categiresFetched(categories: categories)
+        let categories =  CoreDataManager.shared.fetchAllCategories()
+        delegate?.categoriesFetched(categories: categories)
     }
     
     func deleteCategories(category: Category) {
         CoreDataManager.shared.deleteCategory(category: category)
+    }
+    
+    func getAllNotes(){
+        let notes = CoreDataManager.shared.fetchAllNotes()
+        delegate?.notesFetched(notes: notes)
+    }
+    
+    func deleteNote(note: Note){
+        CoreDataManager.shared.deleteNote(note: note)
     }
 }

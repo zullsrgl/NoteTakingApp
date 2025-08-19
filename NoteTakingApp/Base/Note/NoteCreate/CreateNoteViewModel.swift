@@ -24,4 +24,8 @@ final class CreateNoteViewModel {
     func deleteCategory(category: Category){
         CoreDataManager.shared.deleteCategory(category: category)
     }
+    
+    func saveNote(title: String, category: Category?, note: String){
+        CoreDataManager.shared.createNote(title: title, category: category, note: note)
+    }
 }

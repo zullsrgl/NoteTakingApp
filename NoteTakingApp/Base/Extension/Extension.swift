@@ -8,14 +8,6 @@ import UIKit
 
 //MARK: -Color
 extension UIColor {
-    static var random: UIColor {
-        return UIColor(
-            red: CGFloat.random(in: 0.3...1),
-            green: CGFloat.random(in: 0.3...1),
-            blue: CGFloat.random(in: 0.3...1),
-            alpha: 1.0
-        )
-    }
     
     func encode() -> Data? {
         try? NSKeyedArchiver.archivedData(withRootObject: self, requiringSecureCoding: false)
@@ -97,7 +89,7 @@ extension UIViewController {
 
 //MARK: -Notication
 extension Notification.Name {
-    static let tappedCategorySaveButton = Notification.Name("tappedCategorySaveButton")
+    static let contextSavedSuccessfully = Notification.Name("contextSavedSuccessfully")
 }
 
 //MARK: -UIView

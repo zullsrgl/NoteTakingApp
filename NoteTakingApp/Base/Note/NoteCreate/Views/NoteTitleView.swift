@@ -60,6 +60,13 @@ class NoteTitleView: UIView {
         noteTextField.autoSetDimension(.height, toSize: 40)
     }
     
+    func getNoteTitle() -> String?  {
+        guard let title = noteTextField.text, !title.isEmpty else {
+            return nil
+        }
+        return title
+    }
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

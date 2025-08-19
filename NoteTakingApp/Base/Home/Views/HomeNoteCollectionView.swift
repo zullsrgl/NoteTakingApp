@@ -9,11 +9,17 @@ import PureLayout
 
 protocol HomeNoteCollectionViewDelegate: AnyObject {
     func createNoteTapped()
+    func noteDetailTapped()
 }
 
 class HomeNoteCollectionView: UIView {
     
     weak var delegate: HomeNoteCollectionViewDelegate?
+    var noteItem: [Note]? {
+        didSet {
+            collectionView.reloadData()
+        }
+    }
     
     private let collectionView: UICollectionView = {
         var layout = UICollectionViewFlowLayout()
@@ -75,13 +81,17 @@ class HomeNoteCollectionView: UIView {
 
 extension HomeNoteCollectionView: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 100
+        return (noteItem?.count ?? 0) + 1
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeNoteCollectionViewCell.identifire, for: indexPath) as! HomeNoteCollectionViewCell
-        if indexPath.row == 0 {
+        
+        if indexPath.item == 0 {
             cell.createNote()
+        } else {
+            let noteIndex = indexPath.item - 1
+            cell.setCell(note: noteItem?[noteIndex])
         }
         
         return cell
@@ -97,6 +107,9 @@ extension HomeNoteCollectionView: UICollectionViewDelegate, UICollectionViewData
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if indexPath.item == 0 {
             delegate?.createNoteTapped()
+        }else {
+            delegate?.noteDetailTapped()
+        
         }
     }
 }
