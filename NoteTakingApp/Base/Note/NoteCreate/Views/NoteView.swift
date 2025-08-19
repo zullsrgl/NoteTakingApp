@@ -41,7 +41,7 @@ class NoteView: UIView {
         lbl.text = "Note"
         lbl.textColor = .label
         lbl.textAlignment = .left
-        lbl.font = UIFont(name: "HelveticaNeue-Medium", size: 17)
+        lbl.font = UIFont(name: "HelveticaNeue-Medium", size: 18)
         return lbl
     }()
     
@@ -68,8 +68,8 @@ class NoteView: UIView {
         return btn
     }()
     
-    private let categoryLabel: PaddingLabel = {
-        var lbl = PaddingLabel()
+    private let categoryLabel: CategoryPaddingLabel = {
+        var lbl = CategoryPaddingLabel()
         lbl.layer.cornerRadius = 16
         lbl.layer.borderWidth = 1
         lbl.text = "General"

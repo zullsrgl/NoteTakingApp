@@ -99,7 +99,6 @@ final class CoreDataManager {
         newNote.noteTitle = title
         newNote.note = note
         newNote.category = category
-//        newNote.styledText = style
         saveContext()
     }
     

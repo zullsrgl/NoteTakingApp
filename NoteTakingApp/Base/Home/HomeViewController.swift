@@ -44,7 +44,6 @@ class HomeViewController: UIViewController{
         homeCategorieCollectionView.delegate = self
         homeNoteCollectionView.delegate = self
         viewModel.delegate = self
-        
         viewModel.getCategories()
         viewModel.getAllNotes()
         
@@ -71,6 +70,7 @@ class HomeViewController: UIViewController{
     
     @objc private func tappedCategorySaveButton() {
         viewModel.getCategories()
+        viewModel.getAllNotes()
      
     }
 }
@@ -94,7 +94,7 @@ extension HomeViewController: HomeCategoryCollectionViewDelegate {
 
 extension HomeViewController: HomeViewModelDelegate{
     func notesFetched(notes: [Note]) {
-        homeNoteCollectionView.noteItem = notes
+        homeNoteCollectionView.reloadCollectionView(notes: notes)
     }
     
     func categoriesFetched(categories: [Category]) {
@@ -103,11 +103,13 @@ extension HomeViewController: HomeViewModelDelegate{
 }
 
 extension HomeViewController: HomeNoteCollectionViewDelegate{
-    func noteDetailTapped() {
-        navigationController?.pushViewController(NoteDetailViewController(), animated: true)
-    }
-    
     func createNoteTapped() {
         navigationController?.pushViewController(CreateNoteViewController(), animated: true)
+    }
+    
+    func noteDetailTapped(note: Note?) {
+        let vc = NoteDetailViewController()
+        vc.note = note
+        navigationController?.pushViewController(vc, animated: true)
     }
 }

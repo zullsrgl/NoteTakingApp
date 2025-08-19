@@ -9,17 +9,13 @@ import PureLayout
 
 protocol HomeNoteCollectionViewDelegate: AnyObject {
     func createNoteTapped()
-    func noteDetailTapped()
+    func noteDetailTapped(note: Note?)
 }
 
 class HomeNoteCollectionView: UIView {
     
     weak var delegate: HomeNoteCollectionViewDelegate?
-    var noteItem: [Note]? {
-        didSet {
-            collectionView.reloadData()
-        }
-    }
+    var noteItem: [Note]?
     
     private let collectionView: UICollectionView = {
         var layout = UICollectionViewFlowLayout()
@@ -46,7 +42,7 @@ class HomeNoteCollectionView: UIView {
         lbl.text = "Notes"
         lbl.textColor = .label
         lbl.textAlignment = .left
-        lbl.font = UIFont(name: "HelveticaNeue-Medium", size: 17)
+        lbl.font = UIFont(name: "HelveticaNeue-Medium", size: 18)
         return lbl
     }()
     
@@ -73,6 +69,11 @@ class HomeNoteCollectionView: UIView {
         collectionView.autoPinEdge(.bottom, to: .bottom, of: self)
         
     }
+    func reloadCollectionView(notes: [Note]){
+        noteItem = notes
+        collectionView.reloadData()
+    }
+    
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -108,7 +109,7 @@ extension HomeNoteCollectionView: UICollectionViewDelegate, UICollectionViewData
         if indexPath.item == 0 {
             delegate?.createNoteTapped()
         }else {
-            delegate?.noteDetailTapped()
+            delegate?.noteDetailTapped(note: noteItem?[indexPath.item - 1])
         
         }
     }

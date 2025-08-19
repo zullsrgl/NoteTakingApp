@@ -29,7 +29,7 @@ class HomeCategoryCollectionView: UIView {
         lbl.text = "Categories"
         lbl.textColor = .label
         lbl.textAlignment = .left
-        lbl.font = UIFont(name: "HelveticaNeue-Medium", size: 17)
+        lbl.font = UIFont(name: "HelveticaNeue-Medium", size: 18)
         return lbl
     }()
     

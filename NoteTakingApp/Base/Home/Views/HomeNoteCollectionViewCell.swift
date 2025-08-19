@@ -28,7 +28,7 @@ class HomeNoteCollectionViewCell: UICollectionViewCell {
     private let titleLabel: UILabel = {
         let lbl = UILabel()
         lbl.font = .systemFont(ofSize: 12, weight: .bold)
-        lbl.textColor = .black
+        lbl.textColor = .label
         lbl.textAlignment = .left
         lbl.numberOfLines = 1
         return lbl
@@ -79,9 +79,12 @@ class HomeNoteCollectionViewCell: UICollectionViewCell {
         let largeConfig = UIImage.SymbolConfiguration(pointSize: 30, weight: .bold)
         let image = UIImage(systemName: "plus.square.fill", withConfiguration: largeConfig)
         
+        titleLabel.isHidden = true
+        noteContentLabel.isHidden = true
+        
         noteButton.setImage(image, for: .normal)
         noteButton.layer.borderWidth = 1
-        noteButton.backgroundColor = .white
+        noteButton.backgroundColor = .systemBackground
         noteButton.layer.borderColor = UIColor.lightGray.cgColor
         
     }
@@ -92,11 +95,13 @@ class HomeNoteCollectionViewCell: UICollectionViewCell {
         }
         guard let color = note?.category?.categoryColor?.decodeColor() else {return}
         
+        titleLabel.isHidden = false
+        noteContentLabel.isHidden = false
+        
         titleLabel.text = noteTitle
         noteContentLabel.text = note?.note
-        bgView.layer.borderColor = color.cgColor
-        bgView.layer.borderWidth = 2
-        bgView.layer.cornerRadius = 10
+        bgView.backgroundColor = color.withAlphaComponent(0.5)
+        bgView.layer.cornerRadius = 16
     }
     
     private func resetCell() {
