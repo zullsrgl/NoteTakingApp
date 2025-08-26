@@ -53,7 +53,7 @@ class CategoryView: UIView {
     private let colorButton: UIButton = {
         var button = UIButton()
         button.setTitle("Pick Color", for: .normal)
-        button.backgroundColor = .systemBlue
+        button.backgroundColor = Color.secondary
         button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .bold)
         button.isUserInteractionEnabled = true
         button.layer.cornerRadius = 16
@@ -71,7 +71,7 @@ class CategoryView: UIView {
     private let saveButton: UIButton = {
         var button = UIButton()
         button.setTitle("Save", for: .normal)
-        button.backgroundColor = .systemGreen
+        button.backgroundColor = Color.primary
         button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .bold)
         button.isUserInteractionEnabled = true
         button.layer.cornerRadius = 16

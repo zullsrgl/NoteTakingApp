@@ -29,8 +29,4 @@ final class HomeViewModel {
         let notes = CoreDataManager.shared.fetchAllNotes()
         delegate?.notesFetched(notes: notes)
     }
-    
-    func deleteNote(note: Note){
-        CoreDataManager.shared.deleteNote(note: note)
-    }
 }

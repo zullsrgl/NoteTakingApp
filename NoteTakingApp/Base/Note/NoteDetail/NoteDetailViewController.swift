@@ -6,11 +6,12 @@
 //
 
 import PureLayout
+import CoreData
 
-class NoteDetailViewController: UIViewController {
+class NoteDetailViewController: UIViewController       {
     
     private let viewModel = NoteDetailViewModel()
-    var note: Note?
+    var noteID: NSManagedObjectID!
     
     private let scrollView: UIScrollView = {
         let sv = UIScrollView()
@@ -52,8 +53,6 @@ class NoteDetailViewController: UIViewController {
     
     private let categoryLabel: CategoryPaddingLabel = {
         var lbl = CategoryPaddingLabel()
-        lbl.layer.borderColor = UIColor.label.cgColor
-        lbl.layer.borderWidth = 1
         lbl.layer.cornerRadius = 8
         lbl.textAlignment = .center
         lbl.translatesAutoresizingMaskIntoConstraints  = false
@@ -65,19 +64,25 @@ class NoteDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-        navigationItem.title = note?.noteTitle
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "trash"), style: .plain, target: self, action: #selector(deleteNote))
         editButton.addTarget(self, action: #selector(tappedNoteEditButton), for: .touchUpInside)
+        NotificationCenter.default.addObserver(self, selector: #selector(noteIsUpdated), name: .contextSavedSuccessfully, object: nil)
+        
+        viewModel.delegate = self
+        viewModel.getNote(noteID: noteID)
+       
         
         setUpUI()
     }
     
+    @objc func noteIsUpdated(){
+        viewModel.getNote(noteID: noteID)
+    }
+    
     @objc func deleteNote() {
-        guard let note = note else {return}
-        
         let alert = UIAlertController(title: "warning", message: "Are you sure for delete", preferredStyle: .alert)
         let yesAction = UIAlertAction(title: "Yes", style: .default){ _ in
-            self.viewModel.deleteNote(note: note)
+            self.viewModel.deleteNote(note: self.noteID)
             self.navigationController?.popViewController(animated: true)
         }
         
@@ -118,14 +123,27 @@ class NoteDetailViewController: UIViewController {
         view.addSubview(categoryLabel)
         categoryLabel.autoPinEdge(.right, to: .right, of: view, withOffset: -24)
         categoryLabel.autoPinEdge(.top, to: .top, of: view, withOffset: 164)
-        categoryLabel.autoSetDimension(.height, toSize: 24)
-        
-        noteLabel.text = note?.note
-        categoryLabel.text = note?.category?.categoryName
-        categoryLabel.backgroundColor = note?.category?.categoryColor?.decodeColor()
+        categoryLabel.autoSetDimension(.height, toSize: 32)
+            
+        if let bg = categoryLabel.backgroundColor {
+            let resolved = bg.resolvedColor(with: traitCollection)
+            categoryLabel.textColor = resolved.isLight ? .black : .white
+        }
     }
     
     @objc func tappedNoteEditButton(){
-        navigationController?.pushViewController(CreateNoteViewController(), animated: true)
+        let vc = CreateNoteViewController()
+        vc.source = .noteDetailVC
+        vc.noteID = noteID
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+}
+extension NoteDetailViewController: NoteDetailViewModelDelegate {
+    func noteArried(note: Note?) {
+        noteLabel.text = note?.note
+        categoryLabel.text = note?.category?.categoryName
+        categoryLabel.backgroundColor = note?.category?.categoryColor?.decodeColor()
+        navigationItem.title = note?.noteTitle
     }
 }

@@ -6,8 +6,17 @@
 //
 
 import PureLayout
+import CoreData
+
+enum SourceViewController {
+    case homeVC
+    case noteDetailVC
+}
 
 class CreateNoteViewController: UIViewController {
+    
+    var source: SourceViewController?
+    var noteID: NSManagedObjectID?
     
     private let stackContainerView: UIStackView = {
         let stackView = UIStackView()
@@ -29,6 +38,7 @@ class CreateNoteViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         view.backgroundColor = .systemBackground
         navigationItem.title = "Take a note"
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "arrow.backward"), style: .plain, target: self, action: #selector(goBack))
@@ -40,6 +50,11 @@ class CreateNoteViewController: UIViewController {
         
         viewModel.delegate = self
         viewModel.fetchAllCategories()
+        
+        if source == .noteDetailVC {
+            guard let noteID = noteID else {return }
+            viewModel.getNote(noteID: noteID)
+        }
         
         setUpUI()
     }
@@ -67,6 +82,13 @@ class CreateNoteViewController: UIViewController {
 }
 
 extension CreateNoteViewController: NoteViewModelDelegate {
+    func getNote(note: Note) {
+        if source == .noteDetailVC {
+            noteView.loadUI(note: note)
+            noteTitleView.loadNoteTitle(title: note.noteTitle)
+        }
+    }
+    
     func fectedAllCategories(categories: [Category]) {
         homeCategoryCollectionView.reloadData(categoryItems: categories)
     }
@@ -93,7 +115,7 @@ extension CreateNoteViewController: HomeCategoryCollectionViewDelegate {
 
 extension CreateNoteViewController: NoteViewDelegate {
     func noteSaveButtonClicked() {
-        let note = noteView.getNoteText()
+        let noteString = noteView.getNoteText()
         
         guard let noteTitle = noteTitleView.getNoteTitle(), !noteTitle.isEmpty else {
             self.showError(message: "please enter note title")
@@ -105,8 +127,13 @@ extension CreateNoteViewController: NoteViewDelegate {
             return
         }
         
-        viewModel.saveNote(title: noteTitle, category: category, note: note)
-        
+        if source == .homeVC {
+            viewModel.saveNote(title: noteTitle, category: category, note: noteString)
+        }else if source == .noteDetailVC{
+            guard let noteID = noteID else { return }
+            viewModel.updateNote(noteID: noteID, newTitle: noteTitle, newContent: noteString, newCategory: category)
+            
+        }
         self.showToast(message: "Note saved successfully")
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {

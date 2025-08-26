@@ -6,10 +6,11 @@
 //
 
 import PureLayout
+import CoreData
 
 protocol HomeNoteCollectionViewDelegate: AnyObject {
     func createNoteTapped()
-    func noteDetailTapped(note: Note?)
+    func noteDetailTapped(noteID: NSManagedObjectID)
 }
 
 class HomeNoteCollectionView: UIView {
@@ -108,9 +109,9 @@ extension HomeNoteCollectionView: UICollectionViewDelegate, UICollectionViewData
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if indexPath.item == 0 {
             delegate?.createNoteTapped()
-        }else {
-            delegate?.noteDetailTapped(note: noteItem?[indexPath.item - 1])
-        
+        } else {
+            guard let noteID = noteItem?[indexPath.item - 1].objectID else { return }
+            delegate?.noteDetailTapped(noteID: noteID)
         }
     }
 }

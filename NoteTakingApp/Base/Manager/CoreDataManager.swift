@@ -113,8 +113,36 @@ final class CoreDataManager {
     }
     
     //MARK: delete note
-    func deleteNote(note: Note){
-        context.delete(note)
+    func deleteNote(noteID: NSManagedObjectID){
+        do{
+            let noteID = try context.existingObject(with: noteID)
+            context.delete(noteID)
+            saveContext()
+        }catch {
+            print("Note can not deleted")
+        }
+        
+    }
+    
+    //MARK: update note
+    func updateNote(noteID: NSManagedObjectID, newTitle: String?, newContent: String?, newCategory: Category?) {
+        guard let note = getNote(noteID: noteID) else { return }
+        note.noteTitle = newTitle
+        note.note = newContent
+        note.category = newCategory
         saveContext()
+    }
+    
+    //MARK: Get Note
+    func getNote(noteID: NSManagedObjectID) -> Note?{
+        do {
+            if let object = try context.existingObject(with: noteID) as? Note {
+                return object
+            }
+            
+        } catch{
+            print("Note not fund")
+        }
+        return nil
     }
 }

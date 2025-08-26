@@ -103,13 +103,17 @@ extension HomeViewController: HomeViewModelDelegate{
 }
 
 extension HomeViewController: HomeNoteCollectionViewDelegate{
+  
     func createNoteTapped() {
-        navigationController?.pushViewController(CreateNoteViewController(), animated: true)
-    }
-    
-    func noteDetailTapped(note: Note?) {
-        let vc = NoteDetailViewController()
-        vc.note = note
+        let vc =  CreateNoteViewController()
+        vc.source = .homeVC
         navigationController?.pushViewController(vc, animated: true)
     }
+    
+    func noteDetailTapped(noteID: NSManagedObjectID) {
+        let vc = NoteDetailViewController()
+        vc.noteID = noteID
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
 }

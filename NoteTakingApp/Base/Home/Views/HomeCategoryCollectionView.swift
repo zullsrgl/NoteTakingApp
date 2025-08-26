@@ -56,7 +56,7 @@ class HomeCategoryCollectionView: UIView {
     private let addCategoryButton: UIButton  = {
         var button = UIButton()
         button.setImage(UIImage(systemName: "plus"), for: .normal)
-        button.tintColor = .systemGreen
+        button.tintColor =  Color.primary
         button.layer.cornerRadius = 4
         button.layer.borderWidth = 1
         button.layer.borderColor = Color.primary.cgColor

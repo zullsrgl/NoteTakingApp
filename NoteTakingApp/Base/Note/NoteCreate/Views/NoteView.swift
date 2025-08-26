@@ -6,6 +6,7 @@
 //
 
 import PureLayout
+import CoreData
 
 protocol NoteViewDelegate: AnyObject {
     func noteSaveButtonClicked()
@@ -71,12 +72,11 @@ class NoteView: UIView {
     private let categoryLabel: CategoryPaddingLabel = {
         var lbl = CategoryPaddingLabel()
         lbl.layer.cornerRadius = 16
-        lbl.layer.borderWidth = 1
         lbl.text = "General"
-        lbl.layer.borderColor = UIColor.systemGray2.cgColor
         lbl.textAlignment = .center
         lbl.translatesAutoresizingMaskIntoConstraints  = false
         lbl.font = .systemFont(ofSize: 14)
+        lbl.textColor = .label
         lbl.clipsToBounds = true
         return lbl
     }()
@@ -129,6 +129,19 @@ class NoteView: UIView {
         categoryLabel.autoSetDimension(.height, toSize: 42)
         categoryLabel.autoPinEdge(.top, to: .top, of: textView, withOffset: 12)
         categoryLabel.autoPinEdge(.right, to: .right, of: textView, withOffset: -16)
+    }
+    
+    func loadUI(note: Note){
+        
+        textView.text = note.note
+        categoryLabel.text = note.category?.categoryName
+        categoryLabel.backgroundColor = note.category?.categoryColor?.decodeColor()
+        
+        if let bg = categoryLabel.backgroundColor {
+            let resolved = bg.resolvedColor(with: traitCollection)
+            categoryLabel.textColor = resolved.isLight ? .black : .white
+        }
+        
     }
     
     func selectedCategory(category: Category?){

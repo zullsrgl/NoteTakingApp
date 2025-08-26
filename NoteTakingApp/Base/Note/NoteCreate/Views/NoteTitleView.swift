@@ -32,7 +32,6 @@ class NoteTitleView: UIView {
         txtField.leftViewMode = .always
         txtField.font = .systemFont(ofSize: 14, weight: .medium)
         txtField.textAlignment = .left
-        txtField.layer.borderColor = UIColor.systemGray.cgColor
         txtField.textColor = .label
         txtField.layer.borderWidth = 1
         txtField.layer.cornerRadius = 16
@@ -65,6 +64,10 @@ class NoteTitleView: UIView {
             return nil
         }
         return title
+    }
+    
+    func loadNoteTitle(title: String?){
+        noteTextField.text = title
     }
     
     required init?(coder: NSCoder) {

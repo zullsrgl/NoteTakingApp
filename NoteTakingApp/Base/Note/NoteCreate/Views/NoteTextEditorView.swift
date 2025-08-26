@@ -26,7 +26,7 @@ class NoteTextEditor: UIView {
         stackView.alignment = .fill
         stackView.distribution = .fillEqually
         stackView.spacing = 5
-        stackView.backgroundColor = .systemBlue
+        stackView.backgroundColor = Color.secondary
         stackView.layer.cornerRadius = 16
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.layoutMargins = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
@@ -37,21 +37,21 @@ class NoteTextEditor: UIView {
     private let boldButton: UIButton = {
         var button = UIButton()
         button.setImage(UIImage(systemName: "bold"), for: .normal)
-        button.tintColor = .white
+        button.tintColor = Color.white
         return button
     }()
     
     private let italicButton: UIButton = {
         var button = UIButton()
         button.setImage(UIImage(systemName: "italic"), for: .normal)
-        button.tintColor = .white
+        button.tintColor = Color.white
         return button
     }()
     
     private let underlineButton: UIButton = {
         var button = UIButton()
         button.setImage(UIImage(systemName: "underline"), for: .normal)
-        button.tintColor = .white
+        button.tintColor = Color.white
         return button
     }()
     
@@ -59,21 +59,21 @@ class NoteTextEditor: UIView {
     private let justifyButton: UIButton = {
         var button = UIButton()
         button.setImage(UIImage(systemName: "text.justify"), for: .normal)
-        button.tintColor = .white
+        button.tintColor = Color.white
         return button
     }()
     
     private let justifyRightButton: UIButton = {
         var button = UIButton()
         button.setImage(UIImage(systemName: "text.justify.right"), for: .normal)
-        button.tintColor = .white
+        button.tintColor = Color.white
         return button
     }()
     
     private let justifyLeftButton: UIButton = {
         var button = UIButton()
         button.setImage(UIImage(systemName: "text.justify.left"), for: .normal)
-        button.tintColor = .white
+        button.tintColor = Color.white
         return button
     }()
     
