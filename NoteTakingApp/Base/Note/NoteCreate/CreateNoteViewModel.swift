@@ -9,7 +9,7 @@ import CoreData
 
 protocol NoteViewModelDelegate: AnyObject {
     func fectedAllCategories(categories: [Category])
-    func getNote(note: Note)
+    func noteFetched(note: Note)
 }
 
 final class CreateNoteViewModel {
@@ -35,7 +35,7 @@ final class CreateNoteViewModel {
     
     func getNote(noteID: NSManagedObjectID){
         if let note = CoreDataManager.shared.getNote(noteID: noteID){
-            delegate?.getNote(note: note)
+            delegate?.noteFetched(note: note)
         }
     }
 }

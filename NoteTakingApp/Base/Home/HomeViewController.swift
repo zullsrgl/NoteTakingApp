@@ -77,7 +77,7 @@ class HomeViewController: UIViewController{
 
 extension HomeViewController: HomeCategoryCollectionViewDelegate {
     func didSelectCategory(category: Category) {
-        //TODO: filter
+        //TODO: filtering operations
     }
     
     

@@ -82,10 +82,11 @@ class CreateNoteViewController: UIViewController {
 }
 
 extension CreateNoteViewController: NoteViewModelDelegate {
-    func getNote(note: Note) {
+    func noteFetched(note: Note) {
         if source == .noteDetailVC {
-            noteView.loadUI(note: note)
+            noteView.displayNote(note: note)
             noteTitleView.loadNoteTitle(title: note.noteTitle)
+            selectedCategory = note.category
         }
     }
     
@@ -129,7 +130,8 @@ extension CreateNoteViewController: NoteViewDelegate {
         
         if source == .homeVC {
             viewModel.saveNote(title: noteTitle, category: category, note: noteString)
-        }else if source == .noteDetailVC{
+            
+        } else if source == .noteDetailVC {
             guard let noteID = noteID else { return }
             viewModel.updateNote(noteID: noteID, newTitle: noteTitle, newContent: noteString, newCategory: category)
             

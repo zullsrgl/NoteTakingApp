@@ -71,8 +71,7 @@ class NoteView: UIView {
     
     private let categoryLabel: CategoryPaddingLabel = {
         var lbl = CategoryPaddingLabel()
-        lbl.layer.cornerRadius = 16
-        lbl.text = "General"
+        lbl.layer.cornerRadius = 8
         lbl.textAlignment = .center
         lbl.translatesAutoresizingMaskIntoConstraints  = false
         lbl.font = .systemFont(ofSize: 14)
@@ -126,29 +125,31 @@ class NoteView: UIView {
         noteTextEditorView.autoPinEdge(.bottom, to: .bottom, of: bgView)
         
         addSubview(categoryLabel)
-        categoryLabel.autoSetDimension(.height, toSize: 42)
+        categoryLabel.autoSetDimension(.height, toSize: 32)
         categoryLabel.autoPinEdge(.top, to: .top, of: textView, withOffset: 12)
         categoryLabel.autoPinEdge(.right, to: .right, of: textView, withOffset: -16)
     }
     
-    func loadUI(note: Note){
-        
+    func displayNote(note: Note){
         textView.text = note.note
-        categoryLabel.text = note.category?.categoryName
-        categoryLabel.backgroundColor = note.category?.categoryColor?.decodeColor()
-        
-        if let bg = categoryLabel.backgroundColor {
-            let resolved = bg.resolvedColor(with: traitCollection)
-            categoryLabel.textColor = resolved.isLight ? .black : .white
-        }
-        
+        configureCategoryUI(with: note.category)
     }
     
     func selectedCategory(category: Category?){
-        let color =  category?.categoryColor?.decodeColor()
+        configureCategoryUI(with: category)
+    }
+    
+    private func configureCategoryUI(with category: Category?) {
+        let color = category?.categoryColor?.decodeColor()
+        
         categoryLabel.text = category?.categoryName
         categoryLabel.backgroundColor = color
-        categoryLabel.layer.borderColor =  color?.cgColor
+        categoryLabel.layer.borderColor = color?.cgColor
+        
+        if let bg = categoryLabel.backgroundColor {
+            let resolved = bg.resolvedColor(with: traitCollection)
+            categoryLabel.textColor = resolved.isLight ? Color.black : Color.white
+        }
     }
     
     private func applyStyle(_ style: TextStyle) {
@@ -269,7 +270,7 @@ extension NoteView: UITextViewDelegate {
         }
         
         let font = UIFont(descriptor: descriptor, size: baseFont.pointSize)
-        var attributes: [NSAttributedString.Key: Any] = [.font: font]
+        var attributes: [NSAttributedString.Key: Any] = [.font: font, .foregroundColor: UIColor.label]
         
         if typingStyles.contains(.underline) {
             attributes[.underlineStyle] = NSUnderlineStyle.single.rawValue
