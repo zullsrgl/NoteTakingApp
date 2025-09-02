@@ -138,8 +138,21 @@ extension HomeCategoryCollectionView: UICollectionViewDelegate, UICollectionView
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+       
         guard let item = categoryItems?[indexPath.item] else { return }
         delegate?.didSelectCategory(category: item)
+        
+        if let cell = collectionView.cellForItem(at: indexPath) {
+            cell.contentView.backgroundColor = item.categoryColor?.decodeColor()?.withAlphaComponent(0.5)
+            cell.contentView.layer.cornerRadius = 12
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        if let cell = collectionView.cellForItem(at: indexPath) {
+            cell.contentView.backgroundColor = .clear
+            cell.contentView.layer.cornerRadius = 12
+        }
     }
 }
 

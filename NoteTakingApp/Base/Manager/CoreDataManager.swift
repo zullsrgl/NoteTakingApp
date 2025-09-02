@@ -92,6 +92,21 @@ final class CoreDataManager {
         }
     }
     
+    //MARK: search categories
+    func searchCategories(keyword: String) -> [Category] {
+        let request = Category.fetchRequest()
+        request.predicate = NSPredicate(
+            format: "categoryName BEGINSWITH[c] %@",keyword)
+        
+        do {
+            let result = try context.fetch(request)
+            return result
+        } catch {
+            print("Error searching: \(error.localizedDescription)")
+            return []
+        }
+    }
+    
     //MARK: Create Note
     func createNote(title: String, category: Category?, note: String) {
         let newNote = Note(context: context)
@@ -144,5 +159,17 @@ final class CoreDataManager {
             print("Note not fund")
         }
         return nil
+    }
+    
+    func fetchNotes(for category: Category) -> [Note] {
+        let request: NSFetchRequest<Note> = Note.fetchRequest()
+        request.predicate = NSPredicate(format: "category == %@", category)
+        
+        do {
+            return try context.fetch(request)
+        } catch {
+            print("Notlar çekilirken hata: \(error)")
+            return []
+        }
     }
 }

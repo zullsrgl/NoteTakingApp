@@ -29,4 +29,13 @@ final class HomeViewModel {
         let notes = CoreDataManager.shared.fetchAllNotes()
         delegate?.notesFetched(notes: notes)
     }
+    
+   func getSearchText(keyword: String) -> [Category]{
+       CoreDataManager.shared.searchCategories(keyword: keyword)
+    }
+    
+    func getNotes(category: Category) -> [Note]{
+       let notes = CoreDataManager.shared.fetchNotes(for: category)
+       return notes
+    }
 }

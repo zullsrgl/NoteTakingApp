@@ -26,7 +26,7 @@ class HomeViewController: UIViewController{
     
     private let searchBar: UISearchBar = {
         let searchView = UISearchBar()
-        searchView.layer.cornerRadius = 16
+        searchView.layer.cornerRadius = 20
         searchView.placeholder = "Search anything"
         searchView.backgroundImage = UIImage()
         return searchView
@@ -43,6 +43,7 @@ class HomeViewController: UIViewController{
         
         homeCategorieCollectionView.delegate = self
         homeNoteCollectionView.delegate = self
+        searchBar.delegate = self
         viewModel.delegate = self
         viewModel.getCategories()
         viewModel.getAllNotes()
@@ -58,7 +59,7 @@ class HomeViewController: UIViewController{
         stackContainerView.autoPinEdgesToSuperviewEdges()
         
         stackContainerView.addArrangedSubview(searchBar)
-        searchBar.autoSetDimension(.height, toSize: 32)
+        searchBar.autoSetDimension(.height, toSize: 40)
         searchBar.autoSetDimension(.width, toSize: UIScreen.main.bounds.width)
         
         stackContainerView.addArrangedSubview(homeCategorieCollectionView)
@@ -71,15 +72,19 @@ class HomeViewController: UIViewController{
     @objc private func tappedCategorySaveButton() {
         viewModel.getCategories()
         viewModel.getAllNotes()
-     
+        
     }
 }
 
 extension HomeViewController: HomeCategoryCollectionViewDelegate {
     func didSelectCategory(category: Category) {
-        //TODO: filtering operations
+        if category.categoryName == "Genaral" {
+            viewModel.getAllNotes()
+        } else {
+            let filteredNotes = viewModel.getNotes(category: category)
+            homeNoteCollectionView.reloadCollectionView(notes: filteredNotes)
+        }
     }
-    
     
     func tappedAddNewCategoryButton() {
         let vc = CategoryViewController()
@@ -103,7 +108,7 @@ extension HomeViewController: HomeViewModelDelegate{
 }
 
 extension HomeViewController: HomeNoteCollectionViewDelegate{
-  
+    
     func createNoteTapped() {
         let vc =  CreateNoteViewController()
         vc.source = .homeVC
@@ -116,4 +121,20 @@ extension HomeViewController: HomeNoteCollectionViewDelegate{
         navigationController?.pushViewController(vc, animated: true)
     }
     
+}
+
+extension HomeViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+
+        let categories =  viewModel.getSearchText(keyword: searchText)
+        if !categories.isEmpty {
+            homeCategorieCollectionView.reloadData(categoryItems: categories)
+        } else if searchText.isEmpty {
+            viewModel.getCategories()
+            viewModel.getAllNotes()
+
+        } else{
+            homeCategorieCollectionView.reloadData(categoryItems: [])
+        }
+    }
 }
