@@ -52,7 +52,7 @@ class NoteView: UIView {
         view.font = UIFont.systemFont(ofSize: 16)
         view.textContainerInset = UIEdgeInsets(top: 60, left: 0, bottom: 24, right: 0)
         view.layer.borderWidth = 1
-        view.layer.borderColor = UIColor.systemGray2.cgColor
+        view.layer.borderColor = UIColor.systemGray.cgColor
         view.autocapitalizationType = .none
         view.becomeFirstResponder()
         return view

@@ -33,6 +33,7 @@ class NoteTitleView: UIView {
         txtField.font = .systemFont(ofSize: 14, weight: .medium)
         txtField.textAlignment = .left
         txtField.textColor = .label
+        txtField.layer.borderColor = UIColor.systemGray.cgColor
         txtField.layer.borderWidth = 1
         txtField.layer.cornerRadius = 16
         txtField.translatesAutoresizingMaskIntoConstraints = false

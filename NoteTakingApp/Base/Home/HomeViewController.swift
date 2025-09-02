@@ -131,7 +131,7 @@ extension HomeViewController: UISearchBarDelegate {
             homeCategorieCollectionView.reloadData(categoryItems: categories)
         } else if searchText.isEmpty {
             viewModel.getCategories()
-            viewModel.getAllNotes()
+        //    viewModel.getAllNotes()
 
         } else{
             homeCategorieCollectionView.reloadData(categoryItems: [])

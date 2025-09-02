@@ -47,9 +47,16 @@ class HomeCategoryCollectionViewCell: UICollectionViewCell {
         categoryButton.autoPinEdgesToSuperviewEdges()
     }
     
-    func setUpButton(categories: Category?){
+    func setUpButton(categories: Category?,  isSelected: Bool){
         categoryButton.setTitle(categories?.categoryName, for: .normal)
         categoryButton.layer.borderColor  = categories?.categoryColor?.decodeColor()?.cgColor
+        
+        contentView.layer.cornerRadius = 12
+             if isSelected {
+                 contentView.backgroundColor = categories?.categoryColor?.decodeColor()?.withAlphaComponent(0.5)
+             } else {
+                 contentView.backgroundColor = .clear
+             }
     }
 }
 

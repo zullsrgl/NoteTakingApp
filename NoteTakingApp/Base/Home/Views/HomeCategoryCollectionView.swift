@@ -6,6 +6,7 @@
 //
 
 import PureLayout
+import CoreData
 
 protocol HomeCategoryCollectionViewDelegate: AnyObject {
     func tappedAddNewCategoryButton()
@@ -16,6 +17,7 @@ protocol HomeCategoryCollectionViewDelegate: AnyObject {
 class HomeCategoryCollectionView: UIView {
     
     weak var delegate: HomeCategoryCollectionViewDelegate?
+    private var selectedCategoryID: NSManagedObjectID?
     
     var categoryItems: [Category]?
     
@@ -57,6 +59,7 @@ class HomeCategoryCollectionView: UIView {
         var button = UIButton()
         button.setImage(UIImage(systemName: "plus"), for: .normal)
         button.tintColor =  Color.primary
+        button.backgroundColor = UIColor.clear
         button.layer.cornerRadius = 4
         button.layer.borderWidth = 1
         button.layer.borderColor = Color.primary.cgColor
@@ -121,10 +124,13 @@ extension HomeCategoryCollectionView: UICollectionViewDelegate, UICollectionView
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeCategoryCollectionViewCell.identifier, for: indexPath) as! HomeCategoryCollectionViewCell
         
-        cell.delegate = self
-        
-        cell.setUpButton(categories: categoryItems?[indexPath.item])
-        return cell
+        if let category = categoryItems?[indexPath.item] {
+             let isSelectedCategory = (category.objectID == selectedCategoryID)
+             cell.setUpButton(categories: category, isSelected: isSelectedCategory)
+         }
+         
+         cell.delegate = self
+         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -138,21 +144,11 @@ extension HomeCategoryCollectionView: UICollectionViewDelegate, UICollectionView
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-       
         guard let item = categoryItems?[indexPath.item] else { return }
         delegate?.didSelectCategory(category: item)
         
-        if let cell = collectionView.cellForItem(at: indexPath) {
-            cell.contentView.backgroundColor = item.categoryColor?.decodeColor()?.withAlphaComponent(0.5)
-            cell.contentView.layer.cornerRadius = 12
-        }
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        if let cell = collectionView.cellForItem(at: indexPath) {
-            cell.contentView.backgroundColor = .clear
-            cell.contentView.layer.cornerRadius = 12
-        }
+        selectedCategoryID = item.objectID
+        collectionView.reloadData()
     }
 }
 
