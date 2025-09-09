@@ -16,9 +16,10 @@ protocol NoteTextEditorViewDelegate: AnyObject {
     func didTapJustifyRightButton()
 }
 
-class NoteTextEditor: UIView {
+class NoteTextEditorView: UIView {
     
     weak var delegate: NoteTextEditorViewDelegate?
+    private var isSelected: Bool = false
     
     private let stackView : UIStackView = {
         let stackView = UIStackView()
@@ -107,24 +108,36 @@ class NoteTextEditor: UIView {
     
     @objc func boldText(){
         delegate?.didTapBoldButton()
+        boldButton.isSelected.toggle()
+        boldButton.tintColor = boldButton.isSelected ? Color.primary : Color.white
     }
     @objc func italicText(){
         delegate?.didTapItalicButton()
+        italicButton.isSelected.toggle()
+        italicButton.tintColor = italicButton.isSelected ? Color.primary : Color.white
         
     }
     @objc func underlineText(){
         delegate?.didTapUnderlineButton()
+        underlineButton.isSelected.toggle()
+        underlineButton.tintColor = underlineButton.isSelected ? Color.primary : Color.white
         
     }
     @objc func textJustifyRightText(){
         delegate?.didTapJustifyRightButton()
+        justifyRightButton.isSelected.toggle()
+        justifyRightButton.tintColor = justifyRightButton.isSelected ? Color.primary : Color.white
     }
     @objc func textJustifyLeftText(){
         delegate?.didTapJustifyLeftButton()
+        justifyLeftButton.isSelected.toggle()
+        justifyLeftButton.tintColor = justifyLeftButton.isSelected ? Color.primary : Color.white
         
     }
     @objc func textJustifyText(){
         delegate?.didTapJustifyButton()
+        justifyButton.isSelected.toggle()
+        justifyButton.tintColor = justifyButton.isSelected ? Color.primary : Color.white
         
     }
 }

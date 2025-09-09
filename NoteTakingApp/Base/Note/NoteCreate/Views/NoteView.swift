@@ -35,7 +35,7 @@ class NoteView: UIView {
     
     private var typingStyles: Set<TextStyle> = []
     
-    private let noteTextEditorView = NoteTextEditor()
+    private let noteTextEditorView = NoteTextEditorView()
     
     private let noteTitle: UILabel = {
         var lbl = UILabel()
@@ -164,64 +164,64 @@ class NoteView: UIView {
                 typingStyles.insert(style)
             }
         }
+    }
+    
+    private func toggleStyle(_ style: TextStyle, for range: NSRange) {
         
-        func toggleStyle(_ style: TextStyle, for range: NSRange) {
+        let mutableText = NSMutableAttributedString(attributedString: textView.attributedText)
+        
+        mutableText.enumerateAttributes(in: range, options: []) { attrs, subRange, _ in
             
-            let mutableText = NSMutableAttributedString(attributedString: textView.attributedText)
+            var newAttributes = attrs
             
-            mutableText.enumerateAttributes(in: range, options: []) { attrs, subRange, _ in
-                
-                var newAttributes = attrs
-                
-                switch style {
-                case .bold:
-                    if let font = attrs[.font] as? UIFont {
-                        let isBold = font.fontDescriptor.symbolicTraits.contains(.traitBold)
-                        let newFont = isBold
-                        ? UIFont.systemFont(ofSize: font.pointSize)
-                        : UIFont.boldSystemFont(ofSize: font.pointSize)
-                        newAttributes[.font] = newFont
-                    }
-                    
-                case .italic:
-                    if let font = attrs[.font] as? UIFont {
-                        let isItalic = font.fontDescriptor.symbolicTraits.contains(.traitItalic)
-                        let descriptor = font.fontDescriptor.withSymbolicTraits(
-                            isItalic ? [] : [.traitItalic]
-                        ) ?? font.fontDescriptor
-                        newAttributes[.font] = UIFont(descriptor: descriptor, size: font.pointSize)
-                    }
-                    
-                case .underline:
-                    let current = (attrs[.underlineStyle] as? Int) ?? 0
-                    if current == NSUnderlineStyle.single.rawValue {
-                        newAttributes[.underlineStyle] = nil
-                    } else {
-                        newAttributes[.underlineStyle] = NSUnderlineStyle.single.rawValue
-                    }
-                    
-                case .justifyLeft:
-                    let paragraph = NSMutableParagraphStyle()
-                    paragraph.alignment = .left
-                    newAttributes[.paragraphStyle] = paragraph
-                    
-                case .justifyRight:
-                    let paragraph = NSMutableParagraphStyle()
-                    paragraph.alignment = .right
-                    newAttributes[.paragraphStyle] = paragraph
-                    
-                case .justify:
-                    let paragraph = NSMutableParagraphStyle()
-                    paragraph.alignment = .center
-                    newAttributes[.paragraphStyle] = paragraph
+            switch style {
+            case .bold:
+                if let font = attrs[.font] as? UIFont {
+                    let isBold = font.fontDescriptor.symbolicTraits.contains(.traitBold)
+                    let newFont = isBold
+                    ? UIFont.systemFont(ofSize: font.pointSize)
+                    : UIFont.boldSystemFont(ofSize: font.pointSize)
+                    newAttributes[.font] = newFont
                 }
                 
-                mutableText.addAttributes(newAttributes, range: subRange)
+            case .italic:
+                if let font = attrs[.font] as? UIFont {
+                    let isItalic = font.fontDescriptor.symbolicTraits.contains(.traitItalic)
+                    let descriptor = font.fontDescriptor.withSymbolicTraits(
+                        isItalic ? [] : [.traitItalic]
+                    ) ?? font.fontDescriptor
+                    newAttributes[.font] = UIFont(descriptor: descriptor, size: font.pointSize)
+                }
+                
+            case .underline:
+                let current = (attrs[.underlineStyle] as? Int) ?? 0
+                if current == NSUnderlineStyle.single.rawValue {
+                    newAttributes[.underlineStyle] = nil
+                } else {
+                    newAttributes[.underlineStyle] = NSUnderlineStyle.single.rawValue
+                }
+                
+            case .justifyLeft:
+                let paragraph = NSMutableParagraphStyle()
+                paragraph.alignment = .left
+                newAttributes[.paragraphStyle] = paragraph
+                
+            case .justifyRight:
+                let paragraph = NSMutableParagraphStyle()
+                paragraph.alignment = .right
+                newAttributes[.paragraphStyle] = paragraph
+                
+            case .justify:
+                let paragraph = NSMutableParagraphStyle()
+                paragraph.alignment = .center
+                newAttributes[.paragraphStyle] = paragraph
             }
             
-            textView.attributedText = mutableText
-            textView.selectedRange = range
+            mutableText.addAttributes(newAttributes, range: subRange)
         }
+        
+        textView.attributedText = mutableText
+        textView.selectedRange = range
     }
 }
 
@@ -259,18 +259,27 @@ extension NoteView: UITextViewDelegate {
         guard !text.isEmpty else { return true }
         
         let baseFont = UIFont.systemFont(ofSize: textView.font?.pointSize ?? 16)
-        var descriptor = baseFont.fontDescriptor
+        var traits: UIFontDescriptor.SymbolicTraits = []
+    
         
         if typingStyles.contains(.bold) {
-            descriptor = descriptor.withSymbolicTraits([.traitBold]) ?? descriptor
+            traits.insert(.traitBold)
+        }
+        if typingStyles.contains(.italic) {
+            traits.insert(.traitItalic)
         }
         
-        if typingStyles.contains(.italic) {
-            descriptor = descriptor.withSymbolicTraits([.traitItalic]) ?? descriptor
+        var descriptor = baseFont.fontDescriptor
+        if !traits.isEmpty {
+            descriptor = descriptor.withSymbolicTraits(traits) ?? descriptor
         }
         
         let font = UIFont(descriptor: descriptor, size: baseFont.pointSize)
-        var attributes: [NSAttributedString.Key: Any] = [.font: font, .foregroundColor: UIColor.label]
+        
+        var attributes: [NSAttributedString.Key: Any] = [
+            .font: font,
+            .foregroundColor: UIColor.label
+        ]
         
         if typingStyles.contains(.underline) {
             attributes[.underlineStyle] = NSUnderlineStyle.single.rawValue

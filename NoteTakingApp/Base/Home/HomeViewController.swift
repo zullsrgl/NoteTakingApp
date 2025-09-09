@@ -27,7 +27,7 @@ class HomeViewController: UIViewController{
     private let searchBar: UISearchBar = {
         let searchView = UISearchBar()
         searchView.layer.cornerRadius = 20
-        searchView.placeholder = "Search anything"
+        searchView.placeholder = "Search Category"
         searchView.backgroundImage = UIImage()
         return searchView
     }()
@@ -131,7 +131,6 @@ extension HomeViewController: UISearchBarDelegate {
             homeCategorieCollectionView.reloadData(categoryItems: categories)
         } else if searchText.isEmpty {
             viewModel.getCategories()
-        //    viewModel.getAllNotes()
 
         } else{
             homeCategorieCollectionView.reloadData(categoryItems: [])
