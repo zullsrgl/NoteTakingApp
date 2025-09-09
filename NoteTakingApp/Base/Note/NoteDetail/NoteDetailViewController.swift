@@ -141,7 +141,13 @@ class NoteDetailViewController: UIViewController       {
 }
 extension NoteDetailViewController: NoteDetailViewModelDelegate {
     func noteArried(note: Note?) {
-        noteLabel.text = note?.note
+        if let styled = note?.styledText {
+            noteLabel.attributedText = styled as? NSAttributedString
+        } else if let text = note?.note {
+            noteLabel.text = text
+        } else {
+            noteLabel.text = ""
+        }
         categoryLabel.text = note?.category?.categoryName
         categoryLabel.backgroundColor = note?.category?.categoryColor?.decodeColor()
         navigationItem.title = note?.noteTitle

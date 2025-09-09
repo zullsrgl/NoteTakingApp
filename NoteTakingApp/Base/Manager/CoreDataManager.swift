@@ -78,7 +78,6 @@ final class CoreDataManager {
     }
     
     //MARK: Create Defaults category
-    
     func createDefaultCategory(){
         let defaultCategory = Category(context: context)
         defaultCategory.categoryName = "Genaral"
@@ -108,11 +107,11 @@ final class CoreDataManager {
     }
     
     //MARK: Create Note
-    func createNote(title: String, category: Category?, note: String) {
+    func createNote(title: String, category: Category?, attributedNote: NSAttributedString) {
         let newNote = Note(context: context)
         
         newNote.noteTitle = title
-        newNote.note = note
+        newNote.styledText = attributedNote
         newNote.category = category
         saveContext()
     }
@@ -140,10 +139,10 @@ final class CoreDataManager {
     }
     
     //MARK: update note
-    func updateNote(noteID: NSManagedObjectID, newTitle: String?, newContent: String?, newCategory: Category?) {
+    func updateNote(noteID: NSManagedObjectID, newTitle: String?, newContent: NSAttributedString, newCategory: Category?) {
         guard let note = getNote(noteID: noteID) else { return }
         note.noteTitle = newTitle
-        note.note = newContent
+        note.styledText = newContent
         note.category = newCategory
         saveContext()
     }

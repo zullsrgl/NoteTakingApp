@@ -99,7 +99,14 @@ class HomeNoteCollectionViewCell: UICollectionViewCell {
         noteContentLabel.isHidden = false
         
         titleLabel.text = noteTitle
-        noteContentLabel.text = note?.note
+        if let styled = note?.styledText {
+            noteContentLabel.attributedText = styled as? NSAttributedString
+        } else if let text = note?.note {
+            noteContentLabel.text = text
+        } else {
+            noteContentLabel.text = ""
+        }
+       
         bgView.backgroundColor = color.withAlphaComponent(0.5)
         bgView.layer.cornerRadius = 16
     }

@@ -49,7 +49,7 @@ class NoteView: UIView {
     private let textView: UITextView = {
         let view = UITextView()
         view.layer.cornerRadius = 16
-        view.font = UIFont.systemFont(ofSize: 16)
+        view.font = UIFont.systemFont(ofSize: 12)
         view.textContainerInset = UIEdgeInsets(top: 60, left: 0, bottom: 24, right: 0)
         view.layer.borderWidth = 1
         view.layer.borderColor = UIColor.systemGray.cgColor
@@ -94,8 +94,8 @@ class NoteView: UIView {
         delegate?.noteSaveButtonClicked()
     }
     
-    func getNoteText() -> String {
-        return textView.text
+    func getNoteText() -> NSAttributedString {
+        return textView.attributedText
     }
     
     required init?(coder: NSCoder) {
@@ -131,7 +131,11 @@ class NoteView: UIView {
     }
     
     func displayNote(note: Note){
-        textView.text = note.note
+        if let styled = note.styledText as? NSAttributedString {
+            textView.attributedText = styled
+        } else {
+            textView.text = note.note
+        }
         configureCategoryUI(with: note.category)
     }
     
@@ -258,9 +262,8 @@ extension NoteView: UITextViewDelegate {
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         guard !text.isEmpty else { return true }
         
-        let baseFont = UIFont.systemFont(ofSize: textView.font?.pointSize ?? 16)
+        let baseFont = UIFont.systemFont(ofSize: textView.font?.pointSize ?? 12)
         var traits: UIFontDescriptor.SymbolicTraits = []
-    
         
         if typingStyles.contains(.bold) {
             traits.insert(.traitBold)

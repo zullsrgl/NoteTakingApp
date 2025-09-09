@@ -25,12 +25,12 @@ final class CreateNoteViewModel {
         CoreDataManager.shared.deleteCategory(category: category)
     }
     
-    func saveNote(title: String, category: Category?, note: String){
-        CoreDataManager.shared.createNote(title: title, category: category, note: note)
+    func saveNote(title: String, category: Category?, attributedNote: NSAttributedString){
+        CoreDataManager.shared.createNote(title: title, category: category, attributedNote: attributedNote)
     }
     
-    func updateNote(noteID: NSManagedObjectID, newTitle: String?, newContent: String?, newCategory: Category){
-        CoreDataManager.shared.updateNote(noteID: noteID,newTitle: newTitle,newContent: newContent, newCategory: newCategory)
+    func updateNote(noteID: NSManagedObjectID, newTitle: String?, newContent: NSAttributedString, newCategory: Category){
+        CoreDataManager.shared.updateNote(noteID: noteID,newTitle: newTitle, newContent: newContent , newCategory: newCategory)
     }
     
     func getNote(noteID: NSManagedObjectID){

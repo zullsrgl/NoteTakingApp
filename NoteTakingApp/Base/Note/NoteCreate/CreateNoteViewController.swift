@@ -129,7 +129,7 @@ extension CreateNoteViewController: NoteViewDelegate {
         }
         
         if source == .homeVC {
-            viewModel.saveNote(title: noteTitle, category: category, note: noteString)
+            viewModel.saveNote(title: noteTitle, category: category, attributedNote: noteString)
             
         } else if source == .noteDetailVC {
             guard let noteID = noteID else { return }
